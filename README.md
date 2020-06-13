@@ -1,0 +1,3 @@
+# Chip-8 Emulator
+
+I began this project with the hopes of learning more about emulation. I wanted to start writing an NES emulator, but CHIP-8 seemed a little more friendly so I went with that. This project includes a lot of concepts I haven't dealt with directly before, so I'm learning a lot every step of the way. Especially since I've never used Java before this >_< ... At the time of writing, this project is nowhere close to done. Here's to hoping this project doesn't prove too challenging!
