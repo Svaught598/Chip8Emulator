@@ -4,15 +4,15 @@ import java.util.Random;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.*;
 
-
-public class CPU {
+public class CPU extends Component{
 
     //TODO: Create Separate class for Memory
 
     // other objects the CPU must communicate with
     Random random = new Random();
-    Window screen;
+    Panel panel;
 
     // total memory is 4kb, need to use short for lack of native unsigned byte
     public short memory[] = new short[4096];
@@ -50,9 +50,37 @@ public class CPU {
     int vyi;
     int sum;
 
+    // Hexadecimal Sprites
+    public short[] fontSet = {
+        0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+        0x20, 0x60, 0x20, 0x20, 0x70, // 1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+        0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+        0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+        0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+        0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+        0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+    };
+
     public CPU(){   
         //initialize the stack & registers
         stackPointer = 0;
+
+        //most CHIP-8 programs start at byte 512
+        programCounter = 0x200;
+        
+        //load hex sprites into memory
+        for (int i = 0; i < 80; i++){
+            memory[i] = fontSet[i];
+        }
     }
 
     protected void interpretOpcode(int opcode)
@@ -63,6 +91,7 @@ public class CPU {
                 switch (opcode & 0x00FF){
                     case 0x00E0:
                         //Clears the screen. 
+                        panel.clearScreen();
                         programCounter += 2;
                         break;
 
@@ -297,13 +326,14 @@ public class CPU {
                 vxi = (opcode & 0x0F00) >> 8;
                 vyi = (opcode & 0x00F0) >> 4;
                 n = (short) (opcode & 0x000F);
-                //screen.drawSprite(V[vxi], V[vyi], n);
-                //if(screen.pixelFlipped){
-                //    V[15] = 1;
-                //}
-                //else{
-                //    V[15] = 0;
-                //}
+
+                panel.drawSprite(V[vxi], V[vyi], n);
+                if (panel.pixelFlipped == true){
+                    V[0xF] = 1;
+                }
+                else{
+                    V[0xF] = 0;
+                }
                 programCounter += 2;
                 break;
 
@@ -312,10 +342,12 @@ public class CPU {
                 switch (opcode & 0x00FF){
                     case 0x009E:
                         //Skips the next instruction if the key stored in VX is pressed. (Usually the next instruction is a jump to skip a code block) 
+                        //TODO: write this case out
                         break;
 
                     case 0x00A1:
                         //Skips the next instruction if the key stored in VX isn't pressed. (Usually the next instruction is a jump to skip a code block) 
+                        //TODO: write this case out
                         break;
                     
                     default:
@@ -388,4 +420,23 @@ public class CPU {
                 break;
         }
     }  
+
+    public void loadRom(File rom){
+        // Loading rom instructions into variable
+        try{
+            FileInputStream fileInputStream = new FileInputStream(rom);
+            byte[] instructions = new byte[(int) rom.length()];
+
+            //convert file into array of bytes
+            fileInputStream.read(instructions);
+            fileInputStream.close();
+            for (int i = 0; i < instructions.length; i++)
+            {
+                System.out.print((char) instructions[i]);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
