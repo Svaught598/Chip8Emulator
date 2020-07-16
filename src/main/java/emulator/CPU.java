@@ -1,6 +1,9 @@
 package emulator;
 
 import java.util.Random;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
 
 
 public class CPU {
@@ -9,7 +12,7 @@ public class CPU {
 
     // other objects the CPU must communicate with
     Random random = new Random();
-    Screen screen;
+    Window screen;
 
     // total memory is 4kb, need to use short for lack of native unsigned byte
     public short memory[] = new short[4096];
@@ -47,11 +50,7 @@ public class CPU {
     int vyi;
     int sum;
 
-    public CPU(Screen screen)
-    {   
-        // Communicating objects
-        this.screen = screen;
-
+    public CPU(){   
         //initialize the stack & registers
         stackPointer = 0;
     }
@@ -64,7 +63,6 @@ public class CPU {
                 switch (opcode & 0x00FF){
                     case 0x00E0:
                         //Clears the screen. 
-                        screen.clearScreen();
                         programCounter += 2;
                         break;
 
@@ -299,13 +297,13 @@ public class CPU {
                 vxi = (opcode & 0x0F00) >> 8;
                 vyi = (opcode & 0x00F0) >> 4;
                 n = (short) (opcode & 0x000F);
-                screen.drawSprite(V[vxi], V[vyi], n);
-                if(screen.pixelFlipped){
-                    V[15] = 1;
-                }
-                else{
-                    V[15] = 0;
-                }
+                //screen.drawSprite(V[vxi], V[vyi], n);
+                //if(screen.pixelFlipped){
+                //    V[15] = 1;
+                //}
+                //else{
+                //    V[15] = 0;
+                //}
                 programCounter += 2;
                 break;
 
