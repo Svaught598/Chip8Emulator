@@ -392,11 +392,11 @@ public class CPU extends Component{
                         vxi = (opcode & 0x0F00) >> 8;
                         if (I + V[vxi] > 0xFFF){
                             I = (I + V[vxi] - 0xFFF);
-                            v[0xF] = 1;
+                            V[0xF] = 1;
                         }
                         else{
                             I = I + V[vxi];
-                            v[0xF] = 0;
+                            V[0xF] = 0;
                         }
                         programCounter += 2;
                         break;
@@ -415,9 +415,9 @@ public class CPU extends Component{
                         //take the decimal representation of VX, place the hundreds digit in memory at location in I, 
                         //the tens digit at location I+1, and the ones digit at location I+2.) 
                         vxi = (opcode & 0x0F00) >> 8;
-                        memory[I + 2] =  V[vxi] % 10;                               // ones digit
-                        memory[I + 1] = (V[vxi] - memory[I + 2]) % 100;             // tens digit
-                        memory[I] = (V[vxi] - memory[I + 2] - memory[I + 1]) % 1000;// hundreds digit
+                        memory[I + 2] = (short) (V[vxi] % 10);                               // ones digit
+                        memory[I + 1] = (short) ((V[vxi] - memory[I + 2]) % 100);             // tens digit
+                        memory[I] = (short) ((V[vxi] - memory[I + 2] - memory[I + 1]) % 1000);// hundreds digit
                         programCounter += 2;
                         break;
 
