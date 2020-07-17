@@ -8,8 +8,6 @@ import java.io.File;
 public class Chip8 extends JFrame implements ActionListener{
     
     CPU cpu;
-    Panel panel;
-    Keyboard keyboard;
 
     public boolean romLoaded = false;
     public static JMenuItem loadRomItem = new JMenuItem("Load Rom");
@@ -22,17 +20,17 @@ public class Chip8 extends JFrame implements ActionListener{
     public void initChip8(){
         //instantiate objects & prepare GUI
         this.cpu = new CPU();
-        this.panel = new Panel();
-        this.keyboard = new Keyboard();
-        this.add(this.panel);
+        this.cpu.panel = new Panel();
+        this.cpu.keyboard = new Keyboard();
+        this.add(this.cpu.panel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.prepareForResize();
         this.prepareMenu();
 
         //Display the window.
         this.setSize(
-            this.panel.DISPLAY_WIDTH * this.panel.PIXEL_WIDTH,
-            this.panel.DISPLAY_HEIGHT * this.panel.PIXEL_HEIGHT + this.getInsets().top
+            this.cpu.panel.DISPLAY_WIDTH * this.cpu.panel.PIXEL_WIDTH,
+            this.cpu.panel.DISPLAY_HEIGHT * this.cpu.panel.PIXEL_HEIGHT + this.getInsets().top
         );
         this.setVisible(true);
     }
