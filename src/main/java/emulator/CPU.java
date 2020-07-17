@@ -9,37 +9,21 @@ import java.io.*;
 public class CPU extends Component{
 
     //TODO: Create Separate class for Memory
+    public int PROGRAM_START_ADDRESS = 0x200;
 
-    // other objects the CPU must communicate with
     Random random = new Random();
     Panel panel;
 
-    // total memory is 4kb, need to use short for lack of native unsigned byte
+    // registers, stack, memory, timers, etc...
     public short memory[] = new short[4096];
-
-    // array of 16 general purpose 8-bit registers
     public short V[] = new short[16];
-
-    // address register is unsigned 16-bits
+    public int stack[] = new int[16];
     public int I;
-
-    // delay & sound timers are each 8-bit registers
     public short delayTimer;
     public short soundTimer;
-
-    // Program counter (16-bit register)
     public int programCounter;
-
-    // Pointer to top of stack (8-bit register)
     public short stackPointer;
-
-    // Stack is array of 16 16-bit values
-    public int stack[] = new int[16];
-
-    // storage for current opcode (16-bit)
     public int opcode;
-
-    // Carry Flag
     public boolean carry;
 
     // some working variables for interpretting opcodes
@@ -75,7 +59,7 @@ public class CPU extends Component{
         stackPointer = 0;
 
         //most CHIP-8 programs start at byte 512
-        programCounter = 0x200;
+        programCounter = PROGRAM_START_ADDRESS;
         
         //load hex sprites into memory
         for (int i = 0; i < 80; i++){
@@ -421,8 +405,7 @@ public class CPU extends Component{
         }
     }  
 
-    public void loadRom(File rom){
-        // Loading rom instructions into variable
+    public boolean loadRom(File rom){
         try{
             FileInputStream fileInputStream = new FileInputStream(rom);
             byte[] instructions = new byte[(int) rom.length()];
@@ -432,11 +415,22 @@ public class CPU extends Component{
             fileInputStream.close();
             for (int i = 0; i < instructions.length; i++)
             {
-                System.out.print((char) instructions[i]);
+                //TODO: load instructions into CPU memory
+                // do that here, or call method or something
+                memory[PROGRAM_START_ADDRESS + i] = instructions[i];
+                System.out.print((byte) instructions[i]);
             }
+            return true;
         }
         catch (Exception e){
             e.printStackTrace();
+            return false;
         }
+    }
+
+    public void step(){
+        opcode = (short) memory[programCounter] << 8; 
+        opcode += ((short) memory[programCounter + 1]);
+        interpretOpcode(opcode);
     }
 }
