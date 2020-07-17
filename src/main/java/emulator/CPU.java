@@ -8,11 +8,13 @@ import java.io.*;
 
 public class CPU extends Component{
 
-    //TODO: Create Separate class for Memory
     public int PROGRAM_START_ADDRESS = 0x200;
+    public int HEX_START_ADDRESS = 0x000;
+    public int HEX_END_ADDRESS = 0x050;
 
     Random random = new Random();
     Panel panel;
+    Keyboard keyboard;
 
     // registers, stack, memory, timers, etc...
     public short memory[] = new short[4096];
@@ -62,7 +64,7 @@ public class CPU extends Component{
         programCounter = PROGRAM_START_ADDRESS;
         
         //load hex sprites into memory
-        for (int i = 0; i < 80; i++){
+        for (int i = HEX_START_ADDRESS; i < HEX_END_ADDRESS; i++){
             memory[i] = fontSet[i];
         }
     }
@@ -325,13 +327,23 @@ public class CPU extends Component{
 
                 switch (opcode & 0x00FF){
                     case 0x009E:
-                        //Skips the next instruction if the key stored in VX is pressed. (Usually the next instruction is a jump to skip a code block) 
-                        //TODO: write this case out
+                        //Skips the next instruction if the key stored in VX is pressed. 
+                        //(Usually the next instruction is a jump to skip a code block) 
+                        vxi = (opcode & 0x0F00) >> 8;
+                        if (keyboard.keyPressed[V[vxi]] == true){
+                            programCounter += 2;
+                        }
+                        programCounter += 2;
                         break;
 
                     case 0x00A1:
-                        //Skips the next instruction if the key stored in VX isn't pressed. (Usually the next instruction is a jump to skip a code block) 
-                        //TODO: write this case out
+                        //Skips the next instruction if the key stored in VX isn't pressed. 
+                        //(Usually the next instruction is a jump to skip a code block) 
+                        vxi = (opcode & 0x0F00) >> 8;
+                        if (keyboard.keyPressed[V[vxi]] == false){
+                            programCounter += 2;
+                        }
+                        programCounter += 2;
                         break;
                     
                     default:
@@ -352,28 +364,49 @@ public class CPU extends Component{
                         break;
 
                     case 0x000A:
-                        //A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event) 
-                        //TODO: Write This method
+                        //A key press is awaited, and then stored in VX. 
+                        //(Blocking Operation. All instruction halted until next key event) 
+                        short key = (short) keyboard.waitForKeyPress();
+                        vxi = (opcode & 0x0F00) >> 8;
+                        V[vxi] = key;
+                        programCounter += 2;
                         break;
 
                     case 0x0015:
                         //Sets the delay timer to VX. 
-                        //TODO: Write this method
+                        vxi = (opcode & 0x0F00) >> 8;
+                        delayTimer = V[vxi];
+                        programCounter += 2;
                         break;
 
                     case 0x0018:
                         //Sets the sound timer to VX. 
-                        //TODO: Write this method
+                        vxi = (opcode & 0x0F00) >> 8;
+                        soundTimer = V[vxi];
+                        programCounter += 2;
                         break;
 
                     case 0x001E:
-                        //Adds VX to I. VF is set to 1 when there is a range overflow (I+VX>0xFFF), and to 0 when there isn't.
-                        //TODO: Write this method
+                        //Adds VX to I. VF is set to 1 when there is a range overflow 
+                        //(I+VX>0xFFF), and to 0 when there isn't.
+                        vxi = (opcode & 0x0F00) >> 8;
+                        if (I + V[vxi] > 0xFFF){
+                            I = (I + V[vxi] - 0xFFF);
+                            v[0xF] = 1;
+                        }
+                        else{
+                            I = I + V[vxi];
+                            v[0xF] = 0;
+                        }
+                        programCounter += 2;
                         break;
 
                     case 0x0029:
-                        //Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font. 
-                        //TODO: Write this method
+                        //Sets I to the location of the sprite for the character in VX. 
+                        //Characters 0-F (in hexadecimal) are represented by a 4x5 font. 
+                        vxi = (opcode & 0x0F00) >> 8;
+                        I = (HEX_START_ADDRESS + 5*V[vxi]);
+                        programCounter += 2;
                         break;
 
                     case 0x0033:
@@ -381,19 +414,31 @@ public class CPU extends Component{
                         //the middle digit at I plus 1, and the least significant digit at I plus 2. (In other words, 
                         //take the decimal representation of VX, place the hundreds digit in memory at location in I, 
                         //the tens digit at location I+1, and the ones digit at location I+2.) 
-                        //TODO: Write this method
+                        vxi = (opcode & 0x0F00) >> 8;
+                        memory[I + 2] =  V[vxi] % 10;                               // ones digit
+                        memory[I + 1] = (V[vxi] - memory[I + 2]) % 100;             // tens digit
+                        memory[I] = (V[vxi] - memory[I + 2] - memory[I + 1]) % 1000;// hundreds digit
+                        programCounter += 2;
                         break;
 
                     case 0x0055:
-                        //Stores V0 to VX (including VX) in memory starting at address I. The offset from I is 
-                        //increased by 1 for each value written, but I itself is left unmodified.
-                        //TODO: Write this method
+                        //Stores V0 to VX (including VX) in memory starting at address I. 
+                        //The offset from I is increased by 1 for each value written, but I itself is left unmodified.
+                        vxi = (opcode & 0x0F00) >> 8;
+                        for (int i = 0; i <= vxi; i++){
+                            memory[I + i] = V[i];
+                        } 
+                        programCounter += 2;
                         break;
 
                     case 0x0065:
                         //Fills V0 to VX (including VX) with values from memory starting at address I. 
                         //The offset from I is increased by 1 for each value written, but I itself is left unmodified.
-                        //TODO: Write this method
+                        vxi = (opcode & 0x0F00) >> 8;
+                        for (int i = 0; i <= vxi; i++){
+                            V[vxi] = memory[I + i];
+                        }
+                        programCounter += 2;
                         break;
                     
                     default:
@@ -415,8 +460,6 @@ public class CPU extends Component{
             fileInputStream.close();
             for (int i = 0; i < instructions.length; i++)
             {
-                //TODO: load instructions into CPU memory
-                // do that here, or call method or something
                 memory[PROGRAM_START_ADDRESS + i] = instructions[i];
                 System.out.print((byte) instructions[i]);
             }
