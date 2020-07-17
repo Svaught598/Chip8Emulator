@@ -147,4 +147,8 @@ public class Keyboard {
         });
 
     }
+
+    public short waitForKeyPress(){
+        return 1;
+    }
 }
