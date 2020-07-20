@@ -5,77 +5,72 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
-public class Chip8 extends JFrame implements ActionListener{
+public class Chip8{
     
+
     CPU cpu;
+    Panel panel;
+    Keyboard keyboard;
+    Window window;
+
 
     public boolean romLoaded = false;
     public static JMenuItem loadRomItem = new JMenuItem("Load Rom");
 
-    public Chip8(String windowName){
-        //Constructor
-        super(windowName);
+
+    public Chip8(){
     }
+
+
+    public Chip8 getChip8(){
+        return this;
+    }
+
 
     public void initChip8(){
-        //instantiate objects & prepare GUI
-        this.cpu = new CPU();
-        this.cpu.panel = new Panel();
-        this.cpu.keyboard = new Keyboard();
-        this.add(this.cpu.panel);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.prepareForResize();
-        this.prepareMenu();
+        //instantiate objects for emulation
+        cpu = new CPU();
 
-        //Display the window.
-        this.setSize(
-            this.cpu.panel.DISPLAY_WIDTH * this.cpu.panel.PIXEL_WIDTH,
-            this.cpu.panel.DISPLAY_HEIGHT * this.cpu.panel.PIXEL_HEIGHT + this.getInsets().top
-        );
-        this.setVisible(true);
-    }
+        // Swing components need to be invoked later to be in the
+        // event dispatching thread (otherwise, the CPU emulation cycle
+        // ends up preventing menu navigation, paintComponent, etc... 
+        // Things that depend on event handling)
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run(){
+                window = new Window("CHIP8 Emulator - Svaught598");
+                panel = new Panel();
+                keyboard = new Keyboard();
 
-    public void prepareForResize(){
-        //prepare for emulator resize
-        this.addComponentListener(new ComponentAdapter(){
-            public void componentResized(ComponentEvent componentEvent){
-                //TODO: resize logic and stuff goes here
-                System.out.println("resized!");
+                window.add(panel);
+                window.cpu = cpu;
+                window.chip8 = getChip8();
+                cpu.keyboard = keyboard;
+                cpu.panel = panel;
+
+                window.initWindow();
             }
         });
     }
 
-    public void prepareMenu(){
-        //Setup menubar for window
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
-        loadRomItem.addActionListener(this);
-
-        fileMenu.add(loadRomItem);
-        menuBar.add(fileMenu);
-        this.setJMenuBar(menuBar);
-    }
-
-    public void actionPerformed(ActionEvent e){
-        if (e.getSource() == loadRomItem){
-            loadRom();
-        }
-    }
-
-    public void loadRom(){
-        //Creating FileChooser
-        final JFileChooser fileChooser = new JFileChooser();
-        int returnValue = fileChooser.showDialog(this, "Load Rom");
-
-        //If Rom was Chosen, Load to CPU memory
-        if (returnValue == JFileChooser.APPROVE_OPTION){
-            File rom = fileChooser.getSelectedFile();
-            this.romLoaded = this.cpu.loadRom(rom);
-        }
-    }
 
     public void mainLoop(){
-        //TODO: mainloop
+
+        SwingWorker swingWorker = new SwingWorker(){
+            @Override
+            protected String doInBackground() throws Exception{
+                while (true){
+                    if (cpu.romLoaded == true){
+                        cpu.step();
+                    }
+                    try{
+                        Thread.sleep(100);
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        swingWorker.execute();
     }
 }
 
