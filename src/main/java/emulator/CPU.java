@@ -6,12 +6,15 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
 
-public class CPU extends Component{
+public class CPU implements Runnable{
 
+    // constants
     public int PROGRAM_START_ADDRESS = 0x200;
     public int HEX_START_ADDRESS = 0x000;
     public int HEX_END_ADDRESS = 0x050;
+    public int AMOUNT_OF_MEMORY = 4096;
 
+    // other components
     Random random = new Random();
     Panel panel;
     Keyboard keyboard;
@@ -35,6 +38,7 @@ public class CPU extends Component{
     int vxi; 
     int vyi;
     int sum;
+    boolean romLoaded;
 
     // Hexadecimal Sprites
     public short[] fontSet = {
@@ -57,8 +61,29 @@ public class CPU extends Component{
     };
 
     public CPU(){   
-        //initialize the stack & registers
+        //initialize the stack, memory, registers, etc...
+        for (int i = 0; i < AMOUNT_OF_MEMORY; i++){
+            memory[i] = 0;
+        }
+        for (int i = 0; i < 16; i++){
+            V[i] = 0;
+            stack[i] = 0;
+        }
+        I = 0;
+        delayTimer = 0;
+        soundTimer = 0;
+        opcode = 0;
         stackPointer = 0;
+        carry = false;
+
+        //initialize the working variables
+        nnn = 0;
+        nn = 0;
+        n = 0;
+        vxi = 0;
+        vyi = 0;
+        sum = 0;
+        romLoaded = false;
 
         //most CHIP-8 programs start at byte 512
         programCounter = PROGRAM_START_ADDRESS;
@@ -71,7 +96,7 @@ public class CPU extends Component{
 
     protected void interpretOpcode(int opcode)
     {
-        switch (opcode){
+        switch (opcode & 0xF000){
             case 0x0000:
 
                 switch (opcode & 0x00FF){
@@ -192,7 +217,7 @@ public class CPU extends Component{
                         //Sets VX to VX xor VY. 
                         vxi = (opcode & 0x0F00) >> 8;
                         vyi = (opcode & 0x00F0) >> 4;
-                        V[vxi] = (short) (V[vxi] ^ V[vyi]);
+                        V[vxi] = (short) ((V[vxi] ^ V[vyi]) & 0xFF);
                         programCounter += 2;
                         break;
                     
@@ -203,10 +228,10 @@ public class CPU extends Component{
                         sum = V[vxi] + V[vyi];
                         V[vxi] = (short) (sum & 0xFF);
                         if(sum > 255){
-                            V[15] = 1;
+                            V[0xF] = 1;
                         } 
                         else {
-                            V[15] = 0;
+                            V[0xF] = 0;
                         }
                         programCounter += 2;
                         break;
@@ -215,12 +240,12 @@ public class CPU extends Component{
                         //VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't. 
                         vxi = (opcode & 0x0F00) >> 8;
                         vyi = (opcode & 0x00F0) >> 4;
-                        V[vxi] = (short) (V[vxi] - V[vyi]);
+                        V[vxi] = (short) ((V[vxi] - V[vyi]) & 0xFF);
                         if(V[vxi] > V[vyi]){
-                            V[15] = 1;
+                            V[0xF] = 1;
                         } 
                         else {
-                            V[15] = 0;
+                            V[0xF] = 0;
                         }
                         programCounter += 2;
                         break;
@@ -229,10 +254,10 @@ public class CPU extends Component{
                         //Stores the least significant bit of VX in VF and then shifts VX to the right by 1.
                         vxi = (opcode & 0x0F00) >> 8;
                         if((V[vxi] & 1) == 1){
-                            V[15] = 1;
+                            V[0xF] = 1;
                         }
                         else{
-                            V[15] = 0;
+                            V[0xF] = 0;
                         }
                         V[vxi] >>= 1;
                         programCounter += 2;
@@ -242,12 +267,12 @@ public class CPU extends Component{
                         //Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't. 
                         vxi = (opcode & 0x0F00) >> 8;
                         vyi = (opcode & 0x00F0) >> 4;
-                        V[vxi] = (short) (V[vyi] - V[vxi]);
+                        V[vxi] = (short) ((V[vyi] - V[vxi]) & 0xFF);
                         if(V[vyi] > V[vxi]){
-                            V[15] = 1;
+                            V[0xF] = 1;
                         } 
                         else {
-                            V[15] = 0;
+                            V[0xF] = 0;
                         }
                         programCounter += 2;
                         break;
@@ -255,11 +280,11 @@ public class CPU extends Component{
                     case 0x000E:
                         //Stores the most significant bit of VX in VF and then shifts VX to the left by 1.
                         vxi = (opcode & 0x0F00) >> 8;
-                        if((V[vxi] & 0x80) == 1){
-                            V[15] = 1;
+                        if(((V[vxi] & 0x100) >> 8) == 1){
+                            V[0xF] = 1;
                         }
                         else{
-                            V[15] = 0;
+                            V[0xF] = 0;
                         }
                         V[vxi] <<= 1;
                         programCounter += 2;
@@ -312,8 +337,15 @@ public class CPU extends Component{
                 vxi = (opcode & 0x0F00) >> 8;
                 vyi = (opcode & 0x00F0) >> 4;
                 n = (short) (opcode & 0x000F);
+                byte[] spriteArray = new byte[n+1];
 
-                panel.drawSprite(V[vxi], V[vyi], n);
+                // load sprite from memory
+                for (int i=0; i<n; i++){
+                    spriteArray[i] = (byte) memory[I+i];
+                }
+
+                // painting sprite to screen & checking pixelflip
+                panel.drawSprite(V[vxi], V[vyi], spriteArray);
                 if (panel.pixelFlipped == true){
                     V[0xF] = 1;
                 }
@@ -366,7 +398,7 @@ public class CPU extends Component{
                     case 0x000A:
                         //A key press is awaited, and then stored in VX. 
                         //(Blocking Operation. All instruction halted until next key event) 
-                        short key = (short) keyboard.waitForKeyPress();
+                        short key = keyboard.waitForKeyPress();
                         vxi = (opcode & 0x0F00) >> 8;
                         V[vxi] = key;
                         programCounter += 2;
@@ -415,9 +447,9 @@ public class CPU extends Component{
                         //take the decimal representation of VX, place the hundreds digit in memory at location in I, 
                         //the tens digit at location I+1, and the ones digit at location I+2.) 
                         vxi = (opcode & 0x0F00) >> 8;
-                        memory[I + 2] = (short) (V[vxi] % 10);                               // ones digit
-                        memory[I + 1] = (short) ((V[vxi] - memory[I + 2]) % 100);             // tens digit
-                        memory[I] = (short) ((V[vxi] - memory[I + 2] - memory[I + 1]) % 1000);// hundreds digit
+                        memory[I + 2] = (short) (V[vxi] % 10);                                      // ones digit
+                        memory[I + 1] = (short) ((V[vxi] - memory[I + 2])/10 % 100);                // tens digit
+                        memory[I] = (short) ((V[vxi] - memory[I + 2] - memory[I + 1])/100 % 1000);  // hundreds digit
                         programCounter += 2;
                         break;
 
@@ -450,7 +482,7 @@ public class CPU extends Component{
         }
     }  
 
-    public boolean loadRom(File rom){
+    public void loadRom(File rom){
         try{
             FileInputStream fileInputStream = new FileInputStream(rom);
             byte[] instructions = new byte[(int) rom.length()];
@@ -460,20 +492,32 @@ public class CPU extends Component{
             fileInputStream.close();
             for (int i = 0; i < instructions.length; i++)
             {
-                memory[PROGRAM_START_ADDRESS + i] = instructions[i];
-                System.out.print((byte) instructions[i]);
+                memory[PROGRAM_START_ADDRESS + i] = (short) (instructions[i] & 0xFF);
             }
-            return true;
+            romLoaded = true;
         }
         catch (Exception e){
             e.printStackTrace();
-            return false;
+            romLoaded = false;
         }
     }
 
     public void step(){
-        opcode = (short) memory[programCounter] << 8; 
-        opcode += ((short) memory[programCounter + 1]);
+        opcode = getCurrentOpcode() & 0xFFFF;
         interpretOpcode(opcode);
+        System.out.printf("[INFO] Opcode processed: %X \t", opcode);
+        System.out.printf("[INFO] Program Counter: %d +++++++++++++++++++++++++++++++++\n", programCounter);
+    }
+
+    public short getCurrentOpcode(){
+        short OC = 0;
+        OC = (short) (memory[programCounter] << 8); 
+        OC += ((short) memory[programCounter + 1]);
+        return OC;
+    }
+
+    public void run(){
+        System.out.println("[INFO] Emulation Loop Began");
+
     }
 }
