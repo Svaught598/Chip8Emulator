@@ -6,8 +6,8 @@ import java.awt.event.KeyEvent;
 public class Keyboard {
 
     public boolean[] keyPressed;
-    public int lastKeyPressed;
-    public int numberOfKeysPressed;
+    public short lastKeyPressed;
+    public short numberOfKeysPressed;
 
     public Keyboard(){
         keyPressed = new boolean[0x10];
@@ -149,6 +149,13 @@ public class Keyboard {
     }
 
     public short waitForKeyPress(){
-        return 1;
+        while (numberOfKeysPressed == 0){
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        return lastKeyPressed;
     }
 }
