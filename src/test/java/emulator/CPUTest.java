@@ -168,4 +168,33 @@ public class CPUTest {
         // test that programCounter was incremented
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
     }
+
+
+    /**
+     * Test: Opcode 0x7XNN
+     * 
+     * Correct Functionality is:
+     *  - sets V[x] = V[x] + NN (modulo 256)
+     *  - carry flag is unchanged
+     *  - program counter is incremented by 2
+     */
+    @Test
+    public void testOpcode_0x7XNN(){
+        // test for addition under 256
+        short[] instructions = {0x72, 0xAB};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0x2] = 15;
+        cpu.step();
+        assertTrue(cpu.V[0x2] == (15 + 0xAB));
+
+        // test for addition over 256 & program counter & carry flag
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0x2] = 0xFF;
+        cpu.step();
+        assertTrue(cpu.V[0x2] == (short) ((0xFF + 0xAB) % 256));
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+        assertTrue(cpu.carry == false);
+    }
 }
