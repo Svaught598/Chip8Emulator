@@ -3,6 +3,9 @@ package emulator;
 import java.util.Random;
 import java.awt.*;
 import javax.swing.*;
+
+import sun.security.provider.certpath.Vertex;
+
 import java.awt.event.*;
 import java.io.*;
 
@@ -61,6 +64,10 @@ public class CPU implements Runnable{
     };
 
     public CPU(){   
+        initializeCPU();
+    }
+
+    public void initializeCPU(){
         //initialize the stack, memory, registers, etc...
         for (int i = 0; i < AMOUNT_OF_MEMORY; i++){
             memory[i] = 0;
@@ -328,6 +335,7 @@ public class CPU implements Runnable{
                 vxi = (opcode & 0x0F00) >> 8;
                 nn = (opcode & 0x00FF);
                 V[vxi] = (short) (nn & random.nextInt(256));
+                programCounter += 2;
                 break;
 
             case 0xD000:
@@ -449,9 +457,15 @@ public class CPU implements Runnable{
                         //the tens digit at location I+1, and the ones digit at location I+2.) 
                         // TODO: opcode fails test rom
                         vxi = (opcode & 0x0F00) >> 8;
-                        memory[I + 2] = (short) (V[vxi] % 10);                                      // ones digit
-                        memory[I + 1] = (short) ((V[vxi] - memory[I + 2])/10 % 100);                // tens digit
-                        memory[I] = (short) ((V[vxi] - memory[I + 2] - memory[I + 1])/100 % 1000);  // hundreds digit
+                        int vx = V[vxi] & 0xFF;
+                        
+                        int ones = (int) ((vx % 10) & 0xFF);
+                        int tens = (int) (((vx - ones)/10 % 100) & 0xFF);
+                        int hundreds = (int) (((vx - tens - ones)/100 % 1000) & 0xFF);
+
+                        memory[I + 2] = (short) (ones & 0xFF);                               
+                        memory[I + 1] = (short) (tens & 0xFF);
+                        memory[I] = (short) (hundreds & 0xFF);
                         programCounter += 2;
                         break;
 
@@ -470,7 +484,7 @@ public class CPU implements Runnable{
                         //The offset from I is increased by 1 for each value written, but I itself is left unmodified.
                         vxi = (opcode & 0x0F00) >> 8;
                         for (int i = 0; i <= vxi; i++){
-                            V[vxi] = memory[I + i];
+                            V[vxi + i] = memory[I + i];
                         }
                         programCounter += 2;
                         break;
