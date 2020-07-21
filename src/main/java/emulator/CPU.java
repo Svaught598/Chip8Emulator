@@ -255,13 +255,10 @@ public class CPU implements Runnable{
                         // Then shifts VY to the right by 1 and stores in VX.
                         vxi = (opcode & 0x0F00) >> 8;
                         vyi = (opcode & 0x00F0) >> 4;
-                        if((V[vyi] & 0x1) == 1){
-                            V[0xF] = 1;
-                        }
-                        else{
-                            V[0xF] = 0;
-                        }
-                        V[vxi] = (short) (V[vyi] >> 1);
+                        V[0xF] = (short) (V[vyi] & 0x01);
+
+                        // >>> is unsigned right bit shift
+                        V[vxi] = (short) ((V[vyi] >>> 1) & 0xFF);
                         programCounter += 2;
                         break;
 
@@ -290,7 +287,7 @@ public class CPU implements Runnable{
                         else{
                             V[0xF] = 0;
                         }
-                        V[vxi] = (short) (V[vyi] << 1);
+                        V[vxi] = (short) ((V[vyi] << 1) & 0xFF);
                         programCounter += 2;
                         break;
 
