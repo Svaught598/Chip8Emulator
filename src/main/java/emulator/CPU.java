@@ -182,7 +182,7 @@ public class CPU implements Runnable{
                 //Adds NN to VX. (Carry flag is not changed) 
                 nn = opcode & 0x00FF;
                 vxi = (opcode & 0x0F00) >> 8;
-                V[vxi] += nn;
+                V[vxi] = (short) ((V[vxi] + nn) % 0x100);
                 programCounter += 2;
                 break;
             
@@ -251,15 +251,17 @@ public class CPU implements Runnable{
                         break;
 
                     case 0x0006:
-                        //Stores the least significant bit of VX in VF and then shifts VX to the right by 1.
+                        //Stores the least significant bit of VY in VF 
+                        // Then shifts VY to the right by 1 and stores in VX.
                         vxi = (opcode & 0x0F00) >> 8;
-                        if((V[vxi] & 1) == 1){
+                        vyi = (opcode & 0x00F0) >> 4;
+                        if((V[vyi] & 0x1) == 1){
                             V[0xF] = 1;
                         }
                         else{
                             V[0xF] = 0;
                         }
-                        V[vxi] >>= 1;
+                        V[vxi] = (short) (V[vyi] >> 1);
                         programCounter += 2;
                         break;
 
@@ -278,15 +280,17 @@ public class CPU implements Runnable{
                         break;
 
                     case 0x000E:
-                        //Stores the most significant bit of VX in VF and then shifts VX to the left by 1.
+                        // Stores the most significant bit of VY in VF 
+                        // Then shifts VY to the left by 1 and stores it in VX.
                         vxi = (opcode & 0x0F00) >> 8;
-                        if(((V[vxi] & 0x100) >> 8) == 1){
+                        vyi = (opcode & 0x00F0) >> 4;
+                        if(((V[vyi] & 0x80) >> 8) == 1){
                             V[0xF] = 1;
                         }
                         else{
                             V[0xF] = 0;
                         }
-                        V[vxi] <<= 1;
+                        V[vxi] = (short) (V[vyi] << 1);
                         programCounter += 2;
                         break;
 
@@ -446,6 +450,7 @@ public class CPU implements Runnable{
                         //the middle digit at I plus 1, and the least significant digit at I plus 2. (In other words, 
                         //take the decimal representation of VX, place the hundreds digit in memory at location in I, 
                         //the tens digit at location I+1, and the ones digit at location I+2.) 
+                        // TODO: opcode fails test rom
                         vxi = (opcode & 0x0F00) >> 8;
                         memory[I + 2] = (short) (V[vxi] % 10);                                      // ones digit
                         memory[I + 1] = (short) ((V[vxi] - memory[I + 2])/10 % 100);                // tens digit
