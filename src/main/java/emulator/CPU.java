@@ -129,7 +129,7 @@ public class CPU implements Runnable{
 
             case 0x1000:
                 //Jumps to address NNN. 
-                nnn = opcode & 0x0FFF;
+                nnn = (opcode & 0x0FFF);
                 programCounter = nnn;
                 break;
 
@@ -338,7 +338,7 @@ public class CPU implements Runnable{
                 programCounter += 2;
                 break;
 
-            case 0xD000:
+            case 0xD000:10
                 //Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. 
                 //Each row of 8 pixels is read as bit-coded starting from memory location I; 
                 //I value doesn’t change after the execution of this instruction. As described above, 
@@ -515,6 +515,12 @@ public class CPU implements Runnable{
         catch (Exception e){
             e.printStackTrace();
             romLoaded = false;
+        }
+    }
+
+    public void loadInstructions(short[] instructions){
+        for (int i; i < instructions.length; i++){
+            memory[PROGRAM_START_ADDRESS + i] = (short) (instructions[i] & 0xFF);
         }
     }
 
