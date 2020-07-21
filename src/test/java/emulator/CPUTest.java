@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import jdk.internal.jline.internal.TestAccessible;
+
 /**
  * Testing for opcodes!
  */
@@ -57,6 +59,7 @@ public class CPUTest {
         assertTrue(cpu.stackPointer == 1);
     }
 
+
     /**
      * Test: Opcode 0x3XNN
      * 
@@ -80,6 +83,62 @@ public class CPUTest {
         cpu.initializeCPU();
         cpu.loadInstructions(instructions);
         cpu.V[2] = 0xAB;
+        cpu.step();
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 4);
+    }
+
+
+    /**
+     * Test: Opcode 0x4XNN
+     * 
+     * Correct Functionality is:
+     *  - increments programCounter by 2 if VX == NN
+     *  - increments programCounter by 4 if VX != NN
+     */
+    @Test
+    public void testOpcode_0x4XNN(){
+        // Increment by 2 case
+        // load opcode 0x42AB into memory, emulate a cycle, and test
+        short[] instructions = {0x42, 0xAB};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[2] = 0xAB;
+        cpu.step();
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+
+        //Increment by 4 case
+        // load opcode 042AB into memory, emulate a cycle, and test
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[2] = 0x28;
+        cpu.step();
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 4);
+    }
+    
+
+    /**
+     * Test: Opcode 0x5XY0
+     * 
+     * Correct Functionality is:
+     *  - increments program counter by 2 if VX != VY
+     *  - increments program counter by 4 if VX == VY
+     */
+    @Test
+    public void testOpcode_0x5XY0(){
+        // Increment by 2 case
+        // load the opcode 0x51F0 into memory, emulate a cycle, and test
+        short[] instructions = {0x51, 0xF0};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0x1] = 51; cpu.V[0xF] = 123;
+        cpu.step();
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+
+        // Increment by 4 case
+        // load the opcode 0x51F0 into memory, emulate a cycle, and test
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0x1] = 51; cpu.V[0xF] = 51;
         cpu.step();
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 4);
     }
