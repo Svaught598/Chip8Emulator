@@ -1,6 +1,7 @@
 package emulator;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
@@ -144,4 +145,27 @@ public class CPUTest {
     }
 
 
+    /**
+     * Test: Opcode 0x6XNN
+     * 
+     * Correct Functionality is:
+     *  - sets register V[x] = NN
+     *  - increments programCounter by 2
+     */
+    @Test
+    public void testOpcode_0x6XNN(){
+        //load the opcode 0x63AB into memory, emulate a cycle, and test
+        short[] instructions = {0x63, 0xAB};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0x3] = 12;
+        cpu.step();
+
+        // test that value of register was updated
+        assertTrue(cpu.V[0x3] == 0xAB);
+        assertFalse(cpu.V[0x3] == 12);
+
+        // test that programCounter was incremented
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
 }
