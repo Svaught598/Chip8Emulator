@@ -61,6 +61,7 @@ class Panel extends JPanel implements ActionListener{
         int height = spriteArray.length;
         int index;
         byte spriteLine;
+        pixelFlipped = false;
 
         // loop through ylines & get line for sprite
         for (int yline = 0; yline < height; yline++){
@@ -77,9 +78,8 @@ class Panel extends JPanel implements ActionListener{
                     if (pixelArray[index] == 1){
                         pixelFlipped = true;
                     }
+                    pixelArray[index] ^= 1;
                 }
-                System.out.println((spriteLine & (0x80 >> xline)) >> (8 - xline));
-                pixelArray[index] ^= 1;
             }
         }
         System.out.println("\t[INFO] Sprite Painted");
