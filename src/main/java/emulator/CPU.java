@@ -19,8 +19,9 @@ public class CPU implements Runnable{
 
     // other components
     Random random = new Random();
-    Panel panel;
     Keyboard keyboard;
+    GraphicsPanel gPanel;
+    MemoryPanel mPanel;
 
     // registers, stack, memory, timers, etc...
     public short memory[] = new short[4096];
@@ -109,7 +110,7 @@ public class CPU implements Runnable{
                 switch (opcode & 0x00FF){
                     case 0x00E0:
                         //Clears the screen. 
-                        panel.clearScreen();
+                        gPanel.clearScreen();
                         programCounter += 2;
                         break;
 
@@ -338,7 +339,7 @@ public class CPU implements Runnable{
                 programCounter += 2;
                 break;
 
-            case 0xD000:10
+            case 0xD000:
                 //Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. 
                 //Each row of 8 pixels is read as bit-coded starting from memory location I; 
                 //I value doesn’t change after the execution of this instruction. As described above, 
@@ -354,8 +355,8 @@ public class CPU implements Runnable{
                 }
 
                 // painting sprite to screen & checking pixelflip
-                panel.drawSprite(V[vxi], V[vyi], spriteArray);
-                if (panel.pixelFlipped == true){
+                gPanel.drawSprite(V[vxi], V[vyi], spriteArray);
+                if (gPanel.pixelFlipped == true){
                     V[0xF] = 1;
                 }
                 else{
@@ -519,7 +520,7 @@ public class CPU implements Runnable{
     }
 
     public void loadInstructions(short[] instructions){
-        for (int i; i < instructions.length; i++){
+        for (int i = 0; i < instructions.length; i++){
             memory[PROGRAM_START_ADDRESS + i] = (short) (instructions[i] & 0xFF);
         }
     }

@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-class Panel extends JPanel implements ActionListener{
+class GraphicsPanel extends JPanel implements ActionListener{
     
     public int PIXEL_WIDTH = 10;
     public int PIXEL_HEIGHT = 10;
@@ -17,7 +17,8 @@ class Panel extends JPanel implements ActionListener{
     boolean pixelFlipped = false;
     byte pixelArray[] = new byte[2048];
 
-    public Panel(){
+    public GraphicsPanel(LayoutManager layout){
+        super(layout);
         setBackground(Color.BLACK);
     }
 

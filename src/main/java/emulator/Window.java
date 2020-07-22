@@ -20,10 +20,10 @@ public class Window extends JFrame implements ActionListener{
         prepareMenu();
         prepareForResize();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(
-            cpu.panel.DISPLAY_WIDTH * cpu.panel.PIXEL_WIDTH,
-            cpu.panel.DISPLAY_HEIGHT * cpu.panel.PIXEL_HEIGHT + this.getInsets().top
-        );
+        // setSize(
+        //     cpu.panel.DISPLAY_WIDTH * cpu.panel.PIXEL_WIDTH,
+        //     cpu.panel.DISPLAY_HEIGHT * cpu.panel.PIXEL_HEIGHT + this.getInsets().top
+        // );
         setVisible(true);
     }
 
