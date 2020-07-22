@@ -11,12 +11,7 @@ public class Main{
     public static void main(String[] args){
         SwingUtilities.invokeLater(new Runnable() {
             public void run(){
-                try{
-                    UIManager.setLookAndFeel(
-                        UIManager.getSystemLookAndFeelClassName());
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+                setLookAndFeel();
                 startGUI();
             }
         });
@@ -25,6 +20,15 @@ public class Main{
     private static void startGUI(){
         Chip8 emulator = new Chip8();
         emulator.initChip8();
+    }
+
+    private static void setLookAndFeel(){
+        try{
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } 
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
