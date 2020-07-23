@@ -456,8 +456,290 @@ public class CPUTest {
         cpu.step();
         assertTrue(cpu.V[0xA] == 0b00000000);
         assertTrue(cpu.V[0xB] == 0b10000000);
-        System.out.println(cpu.V[0xF]);
         assertTrue(cpu.V[0xF] == 1);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0x9XY0
+     * 
+     * Correct Functionality:
+     *  - increment program counter by 2 if v[x] == v[y]
+     *  - increment program counter by 4 if v[x] != v[y]
+     */
+    @Test
+    public void testOpcode_0x9XY0(){
+        //opcode 9AB0, increment by 2
+        short[] instructions = {0x9A, 0xB0};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0xA] = 0xFB;
+        cpu.V[0xB] = 0xFB;
+        cpu.step();
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+
+        //same opcode, increment by 4
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0xA] = 0xFF;
+        cpu.V[0xB] = 0xAB;
+        cpu.step();
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 4);
+    }
+
+
+    /**
+     * Test: Opcode 0xANNN
+     * 
+     * Correct Functionality:
+     *  - set I = NNN
+     *  - increment program counter by 2
+     */
+    @Test
+    public void testOpcode_0xANNN(){
+        //opcode 0xA4BC
+        short[] instructions = {0xA4, 0xBC};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.step();
+        assertTrue(cpu.I == 0x4BC);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xBNNN
+     * 
+     * Correct Functionality:
+     *  - set program counter = NNN + v[0]
+     */
+    @Test
+    public void testOpcode_0xBNNN(){
+        //opcode 0xB234, jump within memory
+        short[] instructions = {0xB2, 0x34};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0] = 0xFF;
+        cpu.step();
+        assertTrue(cpu.programCounter == 0x0234 + 0x00FF);
+
+        //opcode 0xBFFF, jump out of memory, should stay at current memory address
+        instructions[0] = 0xBF;
+        instructions[1] = 0xFF;
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0] = 0xFF;
+        cpu.step();
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS);
+    }
+
+
+    /**
+     * Test: Opcode 0xCXNN
+     * 
+     * Correct Functionality:
+     *  - Set VX to a random number with a mask of NN
+     *  - increment program counter by 2
+     */
+    @Test
+    public void testOpcode_0xCXNN(){
+        //opcode 0xCA55, check for less than NN, and pc += 2
+        short[] instructions = {0xCA, 0x55};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.step();
+        assertTrue(cpu.V[0xA] <= 0x55);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xFX07
+     * 
+     * Correct Functionality:
+     *  - set v[x] = delayTimer
+     *  - increment program counter by 2
+     */
+    @Test
+    public void testOpcode_0xFX07(){
+        //opcode 0xFA07, test delayTimer to register and pc += 2
+        short[] instructions = {0xFA, 0x07};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.delayTimer = 200;
+        cpu.step();
+        assertTrue(cpu.V[0xA] == 200);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xFX15
+     * 
+     * Correct Functionality:
+     *  - set delayTimer = v[X]
+     *  - increment program counter by 2
+     */
+    @Test
+    public void testOpcode_0xFX15(){
+        //opcode 0xFA15, test register to delayTimer and pc += 2
+        short[] instructions = {0xFA, 0x15};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0xA] = 200;
+        cpu.step();
+        assertTrue(cpu.delayTimer == 200);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xFX18
+     * 
+     * Correct Functionality:
+     *  - set soundTimer = V[x]
+     *  - increment program counter by 2
+     */
+    @Test
+    public void testOpcode_0xFX18(){
+        //opcode 0xFA18, test register to soundTimer and pc += 2
+        short[] instructions = {0xFA, 0x18};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0xA] = 200;
+        cpu.step();
+        assertTrue(cpu.soundTimer == 200);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xFX1E
+     * 
+     * Correct Functionality:
+     *  - set I = V[x]
+     *  - increment program counter by 2
+     */
+    @Test
+    public void testOpcode_0xFX1E(){
+        //opcode 0xFA1E, test register to I, and pc += 2
+        short[] instructions = {0xFA, 0x1E};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0xA] = 200;
+        cpu.step();
+        assertTrue(cpu.I == 200);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xFX29
+     * 
+     * Correct Functionality:
+     *  - Set I = address of sprite stored in V[x] 
+     *  - INcrement program counter by 2
+     */
+    @Test
+    public void testOpcode_0xFX29(){
+        //opcode 0xFA29, test I = correct address
+        short[] instructions = {0xFA, 0x29};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0xA] = 5;
+        cpu.step();
+        assertTrue(cpu.I == 25);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+
+        //same opcode, make sure we only get 4 bits
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.V[0xA] = 0xF5;
+        cpu.step();
+        assertTrue(cpu.I == 25);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xFX33
+     * 
+     * Correct Functionality:
+     *  - set memory[I] = hundreds digit of v[x]
+     *  - set memory[I+1] = tens digit of v[x]
+     *  - set memory[I+2] = ones digit of v[x]
+     *  - increment program counter by 2
+     */
+    @Test
+    public void testOpcode_0xFX33(){
+        //opcode 0xFA33
+        short[] instructions = {0xFA, 0x33};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.I = 1000;
+        cpu.V[0xA] = 123;
+        cpu.step();
+        assertTrue(cpu.memory[1000] == 1);
+        assertTrue(cpu.memory[1001] == 2);
+        assertTrue(cpu.memory[1002] == 3);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+    /**
+     * Test: Opcode 0xFX55
+     * 
+     * Correct Functionality:
+     *  - sets memory[I+i] = V[i] up to V[x]
+     *  - sets I = I+x+1 aftwerwards
+     *  - increments program coutner by 2
+     */
+    @Test
+    public void testOpcode_0xFX55(){
+        //opcode 0xF355, test memory is set correcctly, and I is set correctly, pc += 2
+        short[] instructions = {0xF3, 0x55};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.I = 600;
+        cpu.V[0] = 0x0A; 
+        cpu.V[1] = 0x0B;
+        cpu.V[2] = 0x0C;
+        cpu.V[3] = 0x0D;
+        cpu.step();
+        assertTrue(cpu.memory[600] == 0x0A);
+        assertTrue(cpu.memory[601] == 0x0B);
+        assertTrue(cpu.memory[602] == 0x0C);
+        assertTrue(cpu.memory[603] == 0x0D);
+        assertTrue(cpu.I == 604);
+        assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
+    }
+
+
+    /**
+     * Test: Opcode 0xFX65
+     * 
+     * Correct Functionality:
+     *  - sets v[i] = memory[I+i] up to V[x]
+     *  - sets I = I+x+1
+     *  - increments program counter by 2
+     */
+    @Test
+    public void testOpcode_0xFX65(){
+        //opcode 0xF365, test memory is set correcctly, and I is set correctly, pc += 2
+        short[] instructions = {0xF3, 0x65};
+        cpu.initializeCPU();
+        cpu.loadInstructions(instructions);
+        cpu.I = 600;
+        cpu.memory[cpu.I+0] = 0x0A; 
+        cpu.memory[cpu.I+1] = 0x0B;
+        cpu.memory[cpu.I+2] = 0x0C;
+        cpu.memory[cpu.I+3] = 0x0D;
+        cpu.step();
+        assertTrue(cpu.V[0] == 0x0A);
+        assertTrue(cpu.V[1] == 0x0B);
+        assertTrue(cpu.V[2] == 0x0C);
+        assertTrue(cpu.V[3] == 0x0D);
+        assertTrue(cpu.I == 604);
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
     }
 }
