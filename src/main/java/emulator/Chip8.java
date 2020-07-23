@@ -1,11 +1,11 @@
 package emulator;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-
-import emulator.view.*;
 
 public class Chip8{
     
@@ -15,8 +15,8 @@ public class Chip8{
     Window window;
     GraphicsPanel gPanel;
     MemoryPanel mPanel;
-    // StatusPanel sPanel;
-    // InstructionPanel iPanel;
+    StatusPanel sPanel;
+    InstructionPanel iPanel;
 
 
     public boolean romLoaded = false;
@@ -45,6 +45,8 @@ public class Chip8{
                 window = new Window("CHIP8 Emulator - Svaught598");
                 gPanel = new GraphicsPanel(new BorderLayout());
                 mPanel = new MemoryPanel(new BorderLayout());
+                sPanel = new StatusPanel(new BorderLayout());
+                iPanel = new InstructionPanel(new BorderLayout());
                 keyboard = new Keyboard();
 
                 window.getContentPane().setLayout(new GridBagLayout());
@@ -53,7 +55,7 @@ public class Chip8{
                 gPanel.setBorder(BorderFactory.createLoweredBevelBorder());
                 window.getContentPane().add(
                     gPanel, new GridBagConstraints(
-                        0, 0, 1, 1, 0.75, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                        0, 0, 1, 1, 0.75, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
                 );
 
                 // adding Memory Panel to GUI
@@ -63,10 +65,30 @@ public class Chip8{
                 mPanel.add(mLabel, BorderLayout.CENTER);
                 window.getContentPane().add(
                     mPanel, new GridBagConstraints(
-                        1, 0, 1, 1, 0.25, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                        1, 0, 1, 1, 0.25, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
                 );
 
-                window.setPreferredSize(new Dimension(1024, 768));
+                // adding Status Panel to GUI
+                sPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+                JLabel sLabel = new JLabel("Status Panel");
+                sLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                sPanel.add(sLabel, BorderLayout.CENTER);
+                window.getContentPane().add(
+                    sPanel, new GridBagConstraints(
+                        0, 1, 1, 1, 0.75, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                );
+
+                // adding Instruction Panel to GUI
+                iPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+                JLabel iLabel = new JLabel("Instruction Panel");
+                iLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                iPanel.add(iLabel, BorderLayout.CENTER);
+                window.getContentPane().add(
+                    iPanel, new GridBagConstraints(
+                        1, 1, 1, 1, 0.25, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                );
+
+                window.setPreferredSize(new Dimension(920, 700));
                 window.pack();
 
                 window.cpu = cpu;
