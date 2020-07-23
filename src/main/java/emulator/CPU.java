@@ -289,7 +289,7 @@ public class CPU implements Runnable{
                         // Then shifts VY to the left by 1 and stores it in VX.
                         vxi = (opcode & 0x0F00) >> 8;
                         vyi = (opcode & 0x00F0) >> 4;
-                        if(((V[vyi] & 0x80) >> 8) == 1){
+                        if(((V[vyi] & 0x80) >> 7) == 1){
                             V[0xF] = 1;
                         }
                         else{
