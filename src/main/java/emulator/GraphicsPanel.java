@@ -70,7 +70,7 @@ class GraphicsPanel extends JPanel implements ActionListener{
 
             // loop through xlines & get pixelarray index
             for (int xline = 0; xline < 8; xline++){
-                index = (posX + xline) + (posY + yline)*DISPLAY_WIDTH;
+                index = (int) ((posX + xline) + (posY + yline)*DISPLAY_WIDTH) % 2048;
 
                 // check if bit in spriteLine is unset
                 if ((spriteLine & (0x80 >> xline)) != 0){
