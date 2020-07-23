@@ -35,7 +35,7 @@ public class CPU implements Runnable{
     public int opcode;
     public boolean carry;
 
-    // some working variables for interpretting opcodes
+    // some working variables for interpretting opcodes and other things
     int nnn;
     int nn;
     short n;
@@ -43,6 +43,7 @@ public class CPU implements Runnable{
     int vyi;
     int sum;
     boolean romLoaded;
+    boolean running = false;
 
     // Hexadecimal Sprites
     public short[] fontSet = {
@@ -99,6 +100,7 @@ public class CPU implements Runnable{
         //load hex sprites into memory
         for (int i = HEX_START_ADDRESS; i < HEX_END_ADDRESS; i++){
             memory[i] = fontSet[i];
+        }
         }
     }
 
@@ -462,7 +464,6 @@ public class CPU implements Runnable{
                         //the middle digit at I plus 1, and the least significant digit at I plus 2. (In other words, 
                         //take the decimal representation of VX, place the hundreds digit in memory at location in I, 
                         //the tens digit at location I+1, and the ones digit at location I+2.) 
-                        // TODO: opcode fails test rom
                         vxi = (opcode & 0x0F00) >> 8;
                         int vx = V[vxi] & 0xFF;
                         
@@ -509,6 +510,12 @@ public class CPU implements Runnable{
     }  
 
     public void loadRom(File rom){
+
+        // Stop current emulation (if emulating), reset CPU, and reset Graphics
+        running = false;
+        initializeCPU();
+        gPanel.clearScreen();
+
         try{
             FileInputStream fileInputStream = new FileInputStream(rom);
             byte[] instructions = new byte[(int) rom.length()];
@@ -521,10 +528,12 @@ public class CPU implements Runnable{
                 memory[PROGRAM_START_ADDRESS + i] = (short) (instructions[i] & 0xFF);
             }
             romLoaded = true;
+            running = true;
         }
         catch (Exception e){
             e.printStackTrace();
             romLoaded = false;
+            running = false;
         }
     }
 
@@ -539,6 +548,18 @@ public class CPU implements Runnable{
         interpretOpcode(opcode);
         System.out.printf("[INFO] Opcode processed: %X \t", opcode);
         System.out.printf("[INFO] Program Counter: %d +++++++++++++++++++++++++++++++++\n", programCounter);
+    }
+
+    public void decrementDelayTimer(){
+        if (delayTimer > 0){
+            delayTimer -= 1;
+        }
+    }
+
+    public void decrementSoundTimer(){
+        if (soundTimer > 0){
+            soundTimer -= 1;
+        }
     }
 
     public short getCurrentOpcode(){

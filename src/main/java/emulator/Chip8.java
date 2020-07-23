@@ -21,6 +21,14 @@ public class Chip8{
 
     public boolean romLoaded = false;
     public static JMenuItem loadRomItem = new JMenuItem("Load Rom");
+    public static float nanoPeriodCPU = 1000000000/480;     // nanoseconds per instruction
+
+    public long initialTime;
+    public long finalTime;
+    public long timeElapsed;
+
+    public int stepsBeforeRefresh = 480/60;
+    public int steps;
 
 
     public Chip8(){
@@ -107,16 +115,36 @@ public class Chip8{
         SwingWorker swingWorker = new SwingWorker(){
             @Override
             protected String doInBackground() throws Exception{
-                while (true){
+                while (cpu.running){
+
+                    // begin CPU cycles when rom is Loaded
                     if (cpu.romLoaded == true){
+                        initialTime = System.nanoTime();
                         cpu.step();
-                    }
-                    try{
-                        Thread.sleep(10);
-                    } catch (InterruptedException e){
-                        e.printStackTrace();
+
+                        // Do these actions 60 times a second, 
+                        // stepsBeforeRefresh is calculated from ratio of 
+                        // CPU clock speed and 60 Hz (ratio of 'cycles')
+                        if (steps % stepsBeforeRefresh == 0){
+                            steps = 0;
+                            cpu.decrementDelayTimer();
+                            cpu.decrementSoundTimer();
+                        }
+
+                        // Wait until enough time has passed to begin next cycle
+                        finalTime = System.nanoTime();
+                        timeElapsed = finalTime - initialTime;
+                        while ((nanoPeriodCPU - timeElapsed) > 0){
+                            timeElapsed = System.nanoTime() - initialTime;
+                            try{
+                                Thread.sleep(0);
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
+                return "";
             }
         };
         swingWorker.execute();
