@@ -328,7 +328,13 @@ public class CPU implements Runnable{
             case 0xB000:
                 //Jumps to the address NNN plus V0. 
                 nnn = opcode & 0x0FFF;
-                programCounter = nnn + V[0];
+                short index = (short) ((nnn + V[0]) & 0xFFFF); 
+                if (index > 4096){
+                    // keep programCounter unchanged
+                } 
+                else {
+                    programCounter = index;
+                }
                 break;
 
             case 0xC000:
@@ -447,7 +453,7 @@ public class CPU implements Runnable{
                         //Sets I to the location of the sprite for the character in VX. 
                         //Characters 0-F (in hexadecimal) are represented by a 4x5 font. 
                         vxi = (opcode & 0x0F00) >> 8;
-                        I = (HEX_START_ADDRESS + 5*V[vxi]);
+                        I = (HEX_START_ADDRESS + 5*(V[vxi] & 0x0F));
                         programCounter += 2;
                         break;
 
@@ -461,8 +467,8 @@ public class CPU implements Runnable{
                         int vx = V[vxi] & 0xFF;
                         
                         int ones = (int) ((vx % 10) & 0xFF);
-                        int tens = (int) (((vx - ones)/10 % 100) & 0xFF);
-                        int hundreds = (int) (((vx - tens - ones)/100 % 1000) & 0xFF);
+                        int tens = (int) (((vx - ones) % 100)/10 & 0xFF);
+                        int hundreds = (int) (((vx - tens - ones) % 1000)/100 & 0xFF);
 
                         memory[I + 2] = (short) (ones & 0xFF);                               
                         memory[I + 1] = (short) (tens & 0xFF);
@@ -477,6 +483,7 @@ public class CPU implements Runnable{
                         for (int i = 0; i <= vxi; i++){
                             memory[I + i] = V[i];
                         } 
+                        I += vxi + 1;
                         programCounter += 2;
                         break;
 
@@ -485,8 +492,10 @@ public class CPU implements Runnable{
                         //The offset from I is increased by 1 for each value written, but I itself is left unmodified.
                         vxi = (opcode & 0x0F00) >> 8;
                         for (int i = 0; i <= vxi; i++){
-                            V[vxi + i] = memory[I + i];
+                            V[i] = memory[I + i];
+                            System.out.printf("[INFO] i = %d \tV[i] = %d \tmemory[I + i] = %d", i, V[i], memory[I+i]);
                         }
+                        I += vxi + 1;
                         programCounter += 2;
                         break;
                     
