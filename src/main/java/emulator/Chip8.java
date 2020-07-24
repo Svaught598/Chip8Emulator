@@ -123,6 +123,7 @@ public class Chip8{
                 window.chip8 = getChip8();
                 cpu.keyboard = keyboard;
                 cpu.gPanel = gPanel;
+                sPanel.cpu = cpu;
 
                 window.initWindow();
             }
