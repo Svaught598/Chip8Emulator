@@ -94,9 +94,6 @@ public class Chip8{
                         SwingConstants.CENTER, 
                         new Font("Bauhaus 93", Font.BOLD, 16), 
                         Color.decode("#E86F68")));
-                JLabel sLabel = new JLabel("Status Panel");
-                sLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                sPanel.add(sLabel, BorderLayout.CENTER);
                 window.getContentPane().add(
                     sPanel, new GridBagConstraints(
                         0, 1, 1, 1, 0.75, 0.675, GridBagConstraints.WEST, 
@@ -107,14 +104,11 @@ public class Chip8{
                 iPanel.setBorder(BorderFactory.createTitledBorder(
                     BorderFactory.createCompoundBorder(
                         new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
-                        "Current Instruction", 
+                        "Last Instruction", 
                         SwingConstants.CENTER, 
                         SwingConstants.CENTER, 
                         new Font("Bauhaus 93", Font.BOLD, 16), 
                         Color.decode("#E86F68")));
-                JLabel iLabel = new JLabel("Instruction Panel");
-                iLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                iPanel.add(iLabel, BorderLayout.CENTER);
                 window.getContentPane().add(
                     iPanel, new GridBagConstraints(
                         1, 1, 1, 1, 0.25, 0.675, GridBagConstraints.WEST, 
@@ -147,6 +141,7 @@ public class Chip8{
                     if (cpu.romLoaded == true){
                         initialTime = System.nanoTime();
                         cpu.step();
+                        iPanel.updateInstruction(cpu);
 
                         // Do these actions 60 times a second, 
                         // stepsBeforeRefresh is calculated from ratio of 
@@ -155,6 +150,8 @@ public class Chip8{
                             steps = 0;
                             cpu.decrementDelayTimer();
                             cpu.decrementSoundTimer();
+
+                            // update panels!
                             mPanel.updateMemory(cpu);
                         }
 
