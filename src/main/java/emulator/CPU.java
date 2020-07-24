@@ -493,7 +493,6 @@ public class CPU implements Runnable{
                         vxi = (opcode & 0x0F00) >> 8;
                         for (int i = 0; i <= vxi; i++){
                             V[i] = memory[I + i];
-                            System.out.printf("[INFO] i = %d \tV[i] = %d \tmemory[I + i] = %d", i, V[i], memory[I+i]);
                         }
                         I += vxi + 1;
                         programCounter += 2;
@@ -570,6 +569,9 @@ public class CPU implements Runnable{
 
     public void run(){
         System.out.println("[INFO] Emulation Loop Began");
+    }
 
+    public void stopRunning(){
+        running = false;
     }
 }
