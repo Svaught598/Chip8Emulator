@@ -20,6 +20,7 @@ public class Window extends JFrame implements ActionListener{
         prepareMenu();
         prepareForResize();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setBackground(Color.decode("#C2B28F"));
         setVisible(true);
     }
 
@@ -28,7 +29,7 @@ public class Window extends JFrame implements ActionListener{
         this.addComponentListener(new ComponentAdapter(){
             public void componentResized(ComponentEvent componentEvent){
                 //TODO: resize logic and stuff goes here
-                System.out.println("resized!");
+                System.out.printf("Width: %d \t Height: %d\n", chip8.gPanel.getWidth(), chip8.gPanel.getHeight());
             }
         });
     }

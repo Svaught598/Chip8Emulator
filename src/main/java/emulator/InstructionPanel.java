@@ -7,6 +7,6 @@ public class InstructionPanel extends JPanel{
     
     public InstructionPanel(LayoutManager layout){
         super(layout);
-        setBackground(Color.WHITE);
+        setBackground(Color.decode("#E4D8B4"));
     }
 }

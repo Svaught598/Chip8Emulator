@@ -7,6 +7,6 @@ public class StatusPanel extends JPanel{
 
     public StatusPanel(LayoutManager layout){
         super(layout);
-        setBackground(Color.WHITE);
+        setBackground(Color.decode("#E4D8B4"));
     }
 }

@@ -6,6 +6,7 @@ import java.awt.event.*;
 
 class GraphicsPanel extends JPanel implements ActionListener{
     
+    
     public int PIXEL_WIDTH = 10;
     public int PIXEL_HEIGHT = 10;
     public int DISPLAY_WIDTH = 64;
@@ -13,13 +14,15 @@ class GraphicsPanel extends JPanel implements ActionListener{
     public int DELAY = 20;
     public int NUMBER_OF_PIXELS = 2048;
 
+
     int test = 1;
     boolean pixelFlipped = false;
     byte pixelArray[] = new byte[2048];
 
+
     public GraphicsPanel(LayoutManager layout){
         super(layout);
-        setBackground(Color.BLACK);
+        setBackground(Color.decode("#272324"));
     }
 
     @Override
@@ -30,21 +33,21 @@ class GraphicsPanel extends JPanel implements ActionListener{
 
 
     public void draw(Graphics g){
-        System.out.println("\t[INFO] Draw method called");
         for(int i = 0; i < NUMBER_OF_PIXELS; i++){
             int posX = i % DISPLAY_WIDTH;
             int posY = (int) Math.floor(i/DISPLAY_WIDTH);
 
             if (pixelArray[i] != 1) {
-                g.setColor(Color.BLACK);
+                g.setColor(Color.decode("#272324"));
             }
             else {
-                g.setColor(Color.WHITE);
+                g.setColor(Color.decode("#E2CD6D"));
             }
             g.fillRect(posX*PIXEL_WIDTH, posY*PIXEL_HEIGHT, PIXEL_WIDTH, PIXEL_HEIGHT);
         }
 
     }
+
 
     public void actionPerformed(ActionEvent event){
         // if(test > 2048){
@@ -55,6 +58,7 @@ class GraphicsPanel extends JPanel implements ActionListener{
         // }
         // repaint();
     }
+
 
     public void drawSprite(int posX, int posY, byte[] spriteArray){
         // if any pixels are flipped from set to unset, set pixelFlipped = true
@@ -70,7 +74,7 @@ class GraphicsPanel extends JPanel implements ActionListener{
 
             // loop through xlines & get pixelarray index
             for (int xline = 0; xline < 8; xline++){
-                index = (int) ((posX + xline) + (posY + yline)*DISPLAY_WIDTH) % 2048;
+                index = (int) ((posX + xline) + (posY + yline)*DISPLAY_WIDTH)%2048;
 
                 // check if bit in spriteLine is unset
                 if ((spriteLine & (0x80 >> xline)) != 0){
@@ -83,16 +87,15 @@ class GraphicsPanel extends JPanel implements ActionListener{
                 }
             }
         }
-        System.out.println("\t[INFO] Sprite Painted");
         repaint();
     }
+
 
     public void clearScreen(){
         // clears the screen!
         for (int i = 0; i < NUMBER_OF_PIXELS; i++){
             pixelArray[i] = 0;
         }
-        System.out.println("\t[INFO] Screen Cleared");
         repaint();
     }
 }

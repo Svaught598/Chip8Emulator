@@ -24,7 +24,7 @@ public class CPU implements Runnable{
     MemoryPanel mPanel;
 
     // registers, stack, memory, timers, etc...
-    public short memory[] = new short[4096];
+    public short memory[] = new short[AMOUNT_OF_MEMORY];
     public short V[] = new short[16];
     public int stack[] = new int[16];
     public int I;
@@ -33,7 +33,6 @@ public class CPU implements Runnable{
     public int programCounter;
     public short stackPointer;
     public int opcode;
-    public boolean carry;
 
     // some working variables for interpretting opcodes and other things
     int nnn;
@@ -44,6 +43,7 @@ public class CPU implements Runnable{
     int sum;
     boolean romLoaded;
     boolean running = false;
+    boolean carry = false;
 
     // Hexadecimal Sprites
     public short[] fontSet = {
@@ -100,7 +100,6 @@ public class CPU implements Runnable{
         //load hex sprites into memory
         for (int i = HEX_START_ADDRESS; i < HEX_END_ADDRESS; i++){
             memory[i] = fontSet[i];
-        }
         }
     }
 
@@ -546,8 +545,8 @@ public class CPU implements Runnable{
     public void step(){
         opcode = getCurrentOpcode() & 0xFFFF;
         interpretOpcode(opcode);
-        System.out.printf("[INFO] Opcode processed: %X \t", opcode);
-        System.out.printf("[INFO] Program Counter: %d +++++++++++++++++++++++++++++++++\n", programCounter);
+        // System.out.printf("[INFO] Opcode processed: %X \t", opcode);
+        // System.out.printf("[INFO] Program Counter: %d +++++++++++++++++++++++++++++++++\n", programCounter);
     }
 
     public void decrementDelayTimer(){

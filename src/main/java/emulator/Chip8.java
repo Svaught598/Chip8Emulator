@@ -1,7 +1,9 @@
 package emulator;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.border.*;
+
+import sun.font.Font2D;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,7 +29,7 @@ public class Chip8{
     public long finalTime;
     public long timeElapsed;
 
-    public int stepsBeforeRefresh = 480/60;
+    public int stepsBeforeRefresh = 480/30;
     public int steps;
 
 
@@ -63,17 +65,24 @@ public class Chip8{
                 gPanel.setBorder(BorderFactory.createLoweredBevelBorder());
                 window.getContentPane().add(
                     gPanel, new GridBagConstraints(
-                        0, 0, 1, 1, 0.75, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                        0, 0, 1, 1, 0.75, 0.325, GridBagConstraints.WEST, 
+                        GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
                 // adding Memory Panel to GUI
-                mPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-                JLabel mLabel =  new JLabel("Memory Panel");
-                mLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                mPanel.add(mLabel, BorderLayout.CENTER);
+                mPanel.setBorder(
+                    BorderFactory.createTitledBorder(
+                        BorderFactory.createCompoundBorder(
+                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                        "CPU Registers", 
+                        SwingConstants.CENTER, 
+                        SwingConstants.CENTER, 
+                        new Font("Bauhaus 93", Font.BOLD, 14), 
+                        Color.decode("#E86F68")));
                 window.getContentPane().add(
                     mPanel, new GridBagConstraints(
-                        1, 0, 1, 1, 0.25, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                        1, 0, 1, 1, 0.25, 0.325, GridBagConstraints.WEST, 
+                        GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
                 // adding Status Panel to GUI
@@ -83,7 +92,8 @@ public class Chip8{
                 sPanel.add(sLabel, BorderLayout.CENTER);
                 window.getContentPane().add(
                     sPanel, new GridBagConstraints(
-                        0, 1, 1, 1, 0.75, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                        0, 1, 1, 1, 0.75, 0.675, GridBagConstraints.WEST, 
+                        GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
                 // adding Instruction Panel to GUI
@@ -93,11 +103,13 @@ public class Chip8{
                 iPanel.add(iLabel, BorderLayout.CENTER);
                 window.getContentPane().add(
                     iPanel, new GridBagConstraints(
-                        1, 1, 1, 1, 0.25, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0)
+                        1, 1, 1, 1, 0.25, 0.675, GridBagConstraints.WEST, 
+                        GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
-                window.setPreferredSize(new Dimension(920, 700));
-                window.pack();
+                //window.setPreferredSize(new Dimension(920, 700));
+                window.setSize(new Dimension(1000, 560));
+                //window.pack();
 
                 window.cpu = cpu;
                 window.chip8 = getChip8();
@@ -129,6 +141,7 @@ public class Chip8{
                             steps = 0;
                             cpu.decrementDelayTimer();
                             cpu.decrementSoundTimer();
+                            mPanel.updateMemory(cpu);
                         }
 
                         // Wait until enough time has passed to begin next cycle
