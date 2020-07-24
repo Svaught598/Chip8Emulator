@@ -77,7 +77,7 @@ public class Chip8{
                         "CPU Registers", 
                         SwingConstants.CENTER, 
                         SwingConstants.CENTER, 
-                        new Font("Bauhaus 93", Font.BOLD, 14), 
+                        new Font("Bauhaus 93", Font.BOLD, 16), 
                         Color.decode("#E86F68")));
                 window.getContentPane().add(
                     mPanel, new GridBagConstraints(
@@ -86,7 +86,14 @@ public class Chip8{
                 );
 
                 // adding Status Panel to GUI
-                sPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+                sPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createCompoundBorder(
+                        new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                        "Emulator Status", 
+                        SwingConstants.CENTER, 
+                        SwingConstants.CENTER, 
+                        new Font("Bauhaus 93", Font.BOLD, 16), 
+                        Color.decode("#E86F68")));
                 JLabel sLabel = new JLabel("Status Panel");
                 sLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 sPanel.add(sLabel, BorderLayout.CENTER);
@@ -97,7 +104,14 @@ public class Chip8{
                 );
 
                 // adding Instruction Panel to GUI
-                iPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+                iPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createCompoundBorder(
+                        new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                        "Current Instruction", 
+                        SwingConstants.CENTER, 
+                        SwingConstants.CENTER, 
+                        new Font("Bauhaus 93", Font.BOLD, 16), 
+                        Color.decode("#E86F68")));
                 JLabel iLabel = new JLabel("Instruction Panel");
                 iLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 iPanel.add(iLabel, BorderLayout.CENTER);
@@ -108,7 +122,7 @@ public class Chip8{
                 );
 
                 //window.setPreferredSize(new Dimension(920, 700));
-                window.setSize(new Dimension(1000, 560));
+                window.setSize(new Dimension(1000, 700));
                 //window.pack();
 
                 window.cpu = cpu;
