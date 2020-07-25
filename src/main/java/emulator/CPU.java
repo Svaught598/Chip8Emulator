@@ -492,7 +492,11 @@ public class CPU implements Runnable{
                         for (int i = 0; i <= vxi; i++){
                             memory[I + i] = V[i];
                         } 
-                        I += vxi + 1;
+                        
+                        // Chip8 on COSMAC VIP would also increment, modern roms do 
+                        // not use this implementation
+                        //I += vxi + 1;
+
                         programCounter += 2;
                         break;
 
@@ -503,7 +507,11 @@ public class CPU implements Runnable{
                         for (int i = 0; i <= vxi; i++){
                             V[i] = memory[I + i];
                         }
-                        I += vxi + 1;
+
+                        // Chip8 on COSMAC VIP would also increment, modern roms do 
+                        // not use this implementation
+                        //I += vxi + 1;
+
                         programCounter += 2;
                         break;
                     
