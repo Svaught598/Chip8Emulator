@@ -24,6 +24,10 @@ The goal is to be fully compatible with all known implementations of CHIP-8 inst
 - Panel to view current CPU instruction
 - Panel to look at other stuff (ROM title, buttons, etc...)
 
+# Testing
+
+Since most of the application is GUI, unit tests have only been written for the CPU. In the roms folder, there are two test roms with accompanying documentation to further facilitate testing.
+
 # Installation
 
 Coming soon!
