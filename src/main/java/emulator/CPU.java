@@ -249,13 +249,13 @@ public class CPU implements Runnable{
                         //VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't. 
                         vxi = (opcode & 0x0F00) >> 8;
                         vyi = (opcode & 0x00F0) >> 4;
-                        V[vxi] = (short) ((V[vxi] - V[vyi]) & 0xFF);
                         if(V[vxi] > V[vyi]){
                             V[0xF] = 1;
                         } 
                         else {
                             V[0xF] = 0;
                         }
+                        V[vxi] = (short) ((V[vxi] - V[vyi]) & 0xFF);
                         programCounter += 2;
                         break;
 
@@ -264,10 +264,15 @@ public class CPU implements Runnable{
                         // Then shifts VY to the right by 1 and stores in VX.
                         vxi = (opcode & 0x0F00) >> 8;
                         vyi = (opcode & 0x00F0) >> 4;
-                        V[0xF] = (short) (V[vyi] & 0x01);
 
-                        // >>> is unsigned right bit shift
-                        V[vxi] = (short) ((V[vyi] >>> 1) & 0xFF);
+                        // implementation 0x8XX6 ===================
+                        V[0xF] = (short) (V[vxi] & 0x01);
+                        V[vxi] = (short) ((V[vxi] >>> 1) & 0xFF);
+
+                        // implementation 0x8XY6 ===================
+                        // V[0xF] = (short) (V[vyi] & 0x01);
+                        // V[vxi] = (short) ((V[vxi] >>> 1) & 0xFF);
+
                         programCounter += 2;
                         break;
 
@@ -288,15 +293,19 @@ public class CPU implements Runnable{
                     case 0x000E:
                         // Stores the most significant bit of VY in VF 
                         // Then shifts VY to the left by 1 and stores it in VX.
-                        vxi = (opcode & 0x0F00) >> 8;
-                        vyi = (opcode & 0x00F0) >> 4;
-                        if(((V[vyi] & 0x80) >> 7) == 1){
-                            V[0xF] = 1;
-                        }
-                        else{
-                            V[0xF] = 0;
-                        }
-                        V[vxi] = (short) ((V[vyi] << 1) & 0xFF);
+                        vxi = (opcode & 0x0F00) >>> 8;
+                        vyi = (opcode & 0x00F0) >>> 4;
+
+                        // implementation 0x8XXE ===================
+                        short msb = (short) ((V[vxi] & 0x80) >>> 7);
+                        V[0xF] = msb;
+                        V[vxi] = (short) ((V[vxi] << 1) & 0xFF);
+
+                        // implementation 0x8XYE ===================
+                        // short msb = (short) ((V[vyi] & 0x80) >>> 7);
+                        // V[0xF] = msb;
+                        // V[vxi] = (short) ((V[vyi] << 1) & 0xFF);
+
                         programCounter += 2;
                         break;
 
