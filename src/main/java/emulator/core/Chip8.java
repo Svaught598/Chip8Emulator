@@ -12,6 +12,7 @@ import java.io.File;
 public class Chip8{
     
 
+    // Objects to interact with
     CPU cpu;
     Keyboard keyboard;
     Window window;
@@ -20,20 +21,14 @@ public class Chip8{
     StatusPanel sPanel;
     InstructionPanel iPanel;
 
+    // Clock speed & steps before timer countdown
+    public float clockSpeed;
+    public int stepsBeforeRefresh;
+    public float nanoPeriodCPU;       // nanoseconds per instruction
 
-    public boolean romLoaded = false;
-    public static JMenuItem loadRomItem = new JMenuItem("Load Rom");
-    public static float nanoPeriodCPU = 1000000000/480;     // nanoseconds per instruction
-
-    public long initialTime;
-    public long finalTime;
-    public long timeElapsed;
-
-    public int stepsBeforeRefresh = 480/60;
-    public int steps;
-
-
+ 
     public Chip8(){
+
     }
 
 
@@ -42,9 +37,20 @@ public class Chip8{
     }
 
 
+    public void setClock(float clock){
+        System.out.println("Setting new clock speed");
+        clockSpeed = clock;
+        stepsBeforeRefresh = Math.round(clockSpeed/60);
+        nanoPeriodCPU = 1000000000/clockSpeed;
+    }
+
+
     public void initChip8(){
         //instantiate objects for emulation
         cpu = new CPU();
+
+        //set clock up
+        setClock(500);
 
         // Swing components need to be invoked later to be in the
         // event dispatching thread (otherwise, the CPU emulation cycle
@@ -52,7 +58,7 @@ public class Chip8{
         // Things that depend on event handling)
         SwingUtilities.invokeLater(new Runnable(){
             public void run(){
-                window = new Window("CHIP8 Emulator - Svaught598");
+                window = new Window("CHIP-8 Emulator by Svaught598");
                 gPanel = new GraphicsPanel(new BorderLayout());
                 mPanel = new MemoryPanel(new BorderLayout());
                 sPanel = new StatusPanel(new BorderLayout());
@@ -119,10 +125,10 @@ public class Chip8{
                 window.setSize(new Dimension(1000, 700));
                 //window.pack();
 
-                window.cpu = cpu;
                 window.chip8 = getChip8();
                 cpu.keyboard = keyboard;
                 cpu.gPanel = gPanel;
+                cpu.chip8 = getChip8();
                 sPanel.cpu = cpu;
 
                 window.initWindow();
@@ -136,6 +142,13 @@ public class Chip8{
         SwingWorker swingWorker = new SwingWorker(){
             @Override
             protected String doInBackground() throws Exception{
+
+                // Initialize working variables for loop
+                long initialTime;
+                long finalTime;
+                long timeElapsed;
+                int steps = 0;
+
                 while (cpu.running){
 
                     // begin CPU cycles when rom is Loaded
@@ -161,6 +174,7 @@ public class Chip8{
                         timeElapsed = finalTime - initialTime;
                         while ((nanoPeriodCPU - timeElapsed) > 0){
                             timeElapsed = System.nanoTime() - initialTime;
+                            //System.out.println(timeElapsed);
                             try{
                                 Thread.sleep(0);
                             } catch (Exception e){
@@ -174,5 +188,19 @@ public class Chip8{
         };
         swingWorker.execute();
     }
-}
 
+
+    public void loadRom(){
+        //Creating FileChooser
+        final JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showDialog(window, "Load Rom");
+
+        //If Rom was Chosen, Load to CPU memory, and start emulation
+        if (returnValue == JFileChooser.APPROVE_OPTION){
+            File rom = fileChooser.getSelectedFile();
+            cpu.loadRom(rom);
+            mainLoop();
+        }
+
+    }
+}
