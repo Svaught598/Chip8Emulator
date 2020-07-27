@@ -29,7 +29,7 @@ public class Chip8{
     public long finalTime;
     public long timeElapsed;
 
-    public int stepsBeforeRefresh = 480/30;
+    public int stepsBeforeRefresh = 480/60;
     public int steps;
 
 

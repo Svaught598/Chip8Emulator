@@ -26,7 +26,7 @@ The goal is to be fully compatible with all known implementations of CHIP-8 inst
 
 # Testing
 
-Since most of the application is GUI, unit tests have only been written for the CPU. In the roms folder, there are two test roms with accompanying documentation to further facilitate testing.
+Since most of the application is GUI, unit tests have only been written for the CPU. There are a number of test roms to facilitate debugging, so the unit tests weren't super rigorous; the test roms are included in the roms folder.
 
 # Installation
 
