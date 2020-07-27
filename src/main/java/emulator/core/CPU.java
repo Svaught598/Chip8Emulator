@@ -22,6 +22,7 @@ public class CPU implements Runnable{
     Keyboard keyboard;
     GraphicsPanel gPanel;
     MemoryPanel mPanel;
+    Chip8 chip8;
 
     // registers, stack, memory, timers, etc...
     public short memory[] = new short[AMOUNT_OF_MEMORY];
@@ -42,8 +43,8 @@ public class CPU implements Runnable{
     int vyi;
     int sum;
     boolean romLoaded;
-    boolean running = false;
-    boolean carry = false;
+    boolean running;
+    boolean carry;
 
     // Hexadecimal Sprites
     public short[] fontSet = {
@@ -69,6 +70,7 @@ public class CPU implements Runnable{
         initializeCPU();
     }
 
+
     public void initializeCPU(){
         //initialize the stack, memory, registers, etc...
         for (int i = 0; i < AMOUNT_OF_MEMORY; i++){
@@ -93,6 +95,7 @@ public class CPU implements Runnable{
         vyi = 0;
         sum = 0;
         romLoaded = false;
+        running = false;
 
         //most CHIP-8 programs start at byte 512
         programCounter = PROGRAM_START_ADDRESS;
@@ -102,6 +105,7 @@ public class CPU implements Runnable{
             memory[i] = fontSet[i];
         }
     }
+
 
     protected void interpretOpcode(int opcode)
     {
@@ -524,6 +528,7 @@ public class CPU implements Runnable{
         }
     }  
 
+
     public void loadRom(File rom){
 
         // Stop current emulation (if emulating), reset CPU, and reset Graphics
@@ -552,18 +557,19 @@ public class CPU implements Runnable{
         }
     }
 
+
     public void loadInstructions(short[] instructions){
         for (int i = 0; i < instructions.length; i++){
             memory[PROGRAM_START_ADDRESS + i] = (short) (instructions[i] & 0xFF);
         }
     }
 
+
     public void step(){
         opcode = getCurrentOpcode() & 0xFFFF;
         interpretOpcode(opcode);
-        // System.out.printf("[INFO] Opcode processed: %X \t", opcode);
-        // System.out.printf("[INFO] Program Counter: %d +++++++++++++++++++++++++++++++++\n", programCounter);
     }
+
 
     public void decrementDelayTimer(){
         if (delayTimer > 0){
@@ -571,11 +577,13 @@ public class CPU implements Runnable{
         }
     }
 
+
     public void decrementSoundTimer(){
         if (soundTimer > 0){
             soundTimer -= 1;
         }
     }
+
 
     public short getCurrentOpcode(){
         short OC = 0;
@@ -585,10 +593,44 @@ public class CPU implements Runnable{
     }
 
     public void run(){
-        System.out.println("[INFO] Emulation Loop Began");
+        //nothing
     }
+
+
+    /**
+     * The Following functions are called when buttons 
+     * are pressed in the status panel
+     */
+
+
+    public void incrementClockSpeed(){
+        float newClock = chip8.clockSpeed + 10;
+        chip8.setClock(newClock);
+    } 
+
+
+    public void decrementClockSpeed(){
+        float newClock = chip8.clockSpeed - 10;
+        chip8.setClock(newClock);
+    }
+
 
     public void stopRunning(){
         running = false;
     }
+
+
+    public void resumeRunning(){
+        running = true;
+        if (romLoaded){
+            chip8.mainLoop();
+        }
+    }
+
+
+    public void reset(){
+        gPanel.clearScreen();
+        initializeCPU();
+    }
+
 }
