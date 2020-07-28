@@ -1,10 +1,16 @@
-package emulator;
+package emulator.view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JPanel;
 
-class GraphicsPanel extends JPanel implements ActionListener{
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.LayoutManager;
+import java.awt.Graphics;
+
+
+
+public class GraphicsPanel extends JPanel{
     
     
     public int PIXEL_WIDTH = 10;
@@ -16,7 +22,7 @@ class GraphicsPanel extends JPanel implements ActionListener{
 
 
     int test = 1;
-    boolean pixelFlipped = false;
+    public boolean pixelFlipped = false;
     byte pixelArray[] = new byte[2048];
 
 
@@ -46,17 +52,6 @@ class GraphicsPanel extends JPanel implements ActionListener{
             g.fillRect(posX*PIXEL_WIDTH, posY*PIXEL_HEIGHT, PIXEL_WIDTH, PIXEL_HEIGHT);
         }
 
-    }
-
-
-    public void actionPerformed(ActionEvent event){
-        // if(test > 2048){
-        //     test = 1;
-        // }
-        // else{
-        //     test += 1;
-        // }
-        // repaint();
     }
 
 

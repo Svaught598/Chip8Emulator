@@ -1,14 +1,24 @@
-package emulator;
+package emulator.view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
 import java.io.File;
+
+import emulator.core.Chip8;
+
+
 
 public class Window extends JFrame implements ActionListener{
 
 
-    Chip8 chip8;
+    public Chip8 chip8;
 
 
     public Window(String windowName){

@@ -1,13 +1,23 @@
-package emulator;
+package emulator.view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.BoxLayout;
+
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.LayoutManager;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import emulator.core.CPU;
 
 public class StatusPanel extends JPanel implements ActionListener{
 
 
-    CPU cpu;
+    public CPU cpu;
 
 
     // subPanels

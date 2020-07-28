@@ -1,9 +1,14 @@
-package emulator;
+package emulator.view;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.geom.*;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import java.awt.Color;
+import java.awt.LayoutManager;
+import java.awt.Font;
+
+import emulator.core.CPU;
 
 public class InstructionPanel extends JPanel{
 

@@ -1,16 +1,16 @@
-package emulator;
+package emulator.core;
+
+import java.io.FileInputStream;
+import java.io.File;
 
 import java.util.Random;
-import java.awt.*;
-import javax.swing.*;
 
-import sun.security.provider.certpath.Vertex;
+import emulator.view.GraphicsPanel;
+import emulator.view.MemoryPanel;
 
-import java.awt.event.*;
-import java.io.*;
 
-public class CPU implements Runnable{
 
+public class CPU {
     // constants
     public int PROGRAM_START_ADDRESS = 0x200;
     public int HEX_START_ADDRESS = 0x000;
@@ -592,19 +592,18 @@ public class CPU implements Runnable{
         return OC;
     }
 
-    public void run(){
-        //nothing
-    }
-
 
     /**
+     * 
      * The Following functions are called when buttons 
      * are pressed in the status panel
+     *
      */
 
 
     public void incrementClockSpeed(){
         float newClock = chip8.clockSpeed + 10;
+        System.out.println(newClock);
         chip8.setClock(newClock);
     } 
 

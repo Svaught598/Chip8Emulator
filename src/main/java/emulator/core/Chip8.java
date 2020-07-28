@@ -1,13 +1,30 @@
-package emulator;
+package emulator.core;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JFileChooser;
+import javax.swing.SwingWorker;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.BorderFactory;
 
-import sun.font.Font2D;
+import java.awt.GridBagConstraints;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Dimension;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
+
+import emulator.view.GraphicsPanel;
+import emulator.view.MemoryPanel;
+import emulator.view.StatusPanel;
+import emulator.view.InstructionPanel;
+import emulator.view.Window;
+
+
 
 public class Chip8{
     
@@ -92,9 +109,10 @@ public class Chip8{
                 );
 
                 // adding Status Panel to GUI
-                sPanel.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createCompoundBorder(
-                        new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                sPanel.setBorder(
+                    BorderFactory.createTitledBorder(
+                        BorderFactory.createCompoundBorder(
+                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
                         "Emulator Status", 
                         SwingConstants.CENTER, 
                         SwingConstants.CENTER, 
@@ -107,9 +125,10 @@ public class Chip8{
                 );
 
                 // adding Instruction Panel to GUI
-                iPanel.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createCompoundBorder(
-                        new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                iPanel.setBorder(
+                    BorderFactory.createTitledBorder(
+                        BorderFactory.createCompoundBorder(
+                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
                         "Last Instruction", 
                         SwingConstants.CENTER, 
                         SwingConstants.CENTER, 

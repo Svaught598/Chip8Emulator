@@ -1,26 +1,25 @@
 package emulator;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
+import javax.swing.UIManager;
+import javax.swing.SwingUtilities;
+
+import emulator.core.Chip8;
+
 
 
 public class Main{
 
+
     public static void main(String[] args){
         SwingUtilities.invokeLater(new Runnable() {
             public void run(){
+                Chip8 emulator = new Chip8();
+                emulator.initChip8();
                 setLookAndFeel();
-                startGUI();
             }
         });
     }
 
-    private static void startGUI(){
-        Chip8 emulator = new Chip8();
-        emulator.initChip8();
-    }
 
     private static void setLookAndFeel(){
         try{

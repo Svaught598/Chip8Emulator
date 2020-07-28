@@ -1,7 +1,17 @@
-package emulator;
+package emulator.view;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.BoxLayout;
+import javax.swing.SwingConstants;
+
+import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.LayoutManager;
+import java.awt.GridLayout;
+
+import emulator.core.CPU;
+
 
 public class MemoryPanel extends JPanel{
 
