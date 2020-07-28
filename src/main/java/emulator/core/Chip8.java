@@ -39,12 +39,7 @@ public class Chip8{
     InstructionPanel iPanel;
     SwingWorker mainThread;
 
-    // // Clock speed & steps before timer countdown
-    // public float clockSpeed;
-    // public int stepsBeforeRefresh;
-    // public float nanoPeriodCPU;       // nanoseconds per instruction
 
- 
     public Chip8(){
 
     }
@@ -53,14 +48,6 @@ public class Chip8{
     public Chip8 getChip8(){
         return this;
     }
-
-
-    // public void setClock(float clock){
-    //     System.out.println("Setting new clock speed");
-    //     clockSpeed = clock;
-    //     stepsBeforeRefresh = Math.round(clockSpeed/60);
-    //     nanoPeriodCPU = 1000000000/clockSpeed;
-    // }
 
 
     public void initChip8(){
@@ -89,7 +76,7 @@ public class Chip8{
                 gPanel.setBorder(BorderFactory.createLoweredBevelBorder());
                 window.getContentPane().add(
                     gPanel, new GridBagConstraints(
-                        0, 0, 1, 1, 0.75, 0.325, GridBagConstraints.WEST, 
+                        0, 0, 1, 1, 0.75, 0.7, GridBagConstraints.WEST, 
                         GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
@@ -105,7 +92,7 @@ public class Chip8{
                         Color.decode("#E86F68")));
                 window.getContentPane().add(
                     mPanel, new GridBagConstraints(
-                        1, 0, 1, 1, 0.25, 0.325, GridBagConstraints.WEST, 
+                        1, 0, 1, 1, 0.25, 0.7, GridBagConstraints.WEST, 
                         GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
@@ -121,7 +108,7 @@ public class Chip8{
                         Color.decode("#E86F68")));
                 window.getContentPane().add(
                     sPanel, new GridBagConstraints(
-                        0, 1, 1, 1, 0.75, 0.675, GridBagConstraints.WEST, 
+                        0, 1, 1, 1, 0.75, 0.3, GridBagConstraints.WEST, 
                         GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
@@ -137,7 +124,7 @@ public class Chip8{
                         Color.decode("#E86F68")));
                 window.getContentPane().add(
                     iPanel, new GridBagConstraints(
-                        1, 1, 1, 1, 0.25, 0.675, GridBagConstraints.WEST, 
+                        1, 1, 1, 1, 0.25, 0.3, GridBagConstraints.WEST, 
                         GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
                 );
 
@@ -238,6 +225,7 @@ public class Chip8{
         if (returnValue == JFileChooser.APPROVE_OPTION){
             File rom = fileChooser.getSelectedFile();
             cpu.loadRom(rom);
+            sPanel.updateRomLoaded(rom.getName());
             mainLoop();
         }
 
