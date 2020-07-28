@@ -10,6 +10,8 @@ import java.awt.Font;
 
 import emulator.core.CPU;
 
+
+
 public class InstructionPanel extends JPanel{
 
 

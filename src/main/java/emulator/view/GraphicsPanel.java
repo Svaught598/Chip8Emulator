@@ -31,6 +31,7 @@ public class GraphicsPanel extends JPanel{
         setBackground(Color.decode("#272324"));
     }
 
+    
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);

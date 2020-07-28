@@ -8,14 +8,17 @@ import java.awt.KeyboardFocusManager;
 
 public class Keyboard {
 
+    
     public boolean[] keyPressed;
     public short lastKeyPressed;
     public short numberOfKeysPressed;
+
 
     public Keyboard(){
         keyPressed = new boolean[0x10];
         prepareKeyboard();
     }
+
 
     public boolean setKeys(int key, boolean isPressed){
         switch (key){
@@ -122,6 +125,7 @@ public class Keyboard {
         return true;
     }
 
+
     public void prepareKeyboard(){
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher(){
 
@@ -150,6 +154,7 @@ public class Keyboard {
         });
 
     }
+
 
     public short waitForKeyPress(){
         while (numberOfKeysPressed == 0){
