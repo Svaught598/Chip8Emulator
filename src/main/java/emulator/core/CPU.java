@@ -11,6 +11,7 @@ import emulator.view.MemoryPanel;
 
 
 public class CPU {
+
     // constants
     public int PROGRAM_START_ADDRESS = 0x200;
     public int HEX_START_ADDRESS = 0x000;
@@ -35,6 +36,12 @@ public class CPU {
     public short stackPointer;
     public int opcode;
 
+    // Clock speed, main loop will check this each iteration and adjust accordingly
+    // UI operates in one thread, and the loop in another, hence volatile
+    public volatile float clockSpeed;
+    public volatile int stepsBeforeRefresh;
+    public volatile float nanoPeriodCPU;   
+
     // some working variables for interpretting opcodes and other things
     int nnn;
     int nn;
@@ -42,9 +49,9 @@ public class CPU {
     int vxi; 
     int vyi;
     int sum;
-    boolean romLoaded;
-    boolean running;
     boolean carry;
+    volatile boolean romLoaded;
+    volatile boolean running;
 
     // Hexadecimal Sprites
     public short[] fontSet = {
@@ -67,11 +74,12 @@ public class CPU {
     };
 
     public CPU(){   
-        initializeCPU();
+        initMemory();
+        setClock(500);
     }
 
 
-    public void initializeCPU(){
+    public void initMemory(){
         //initialize the stack, memory, registers, etc...
         for (int i = 0; i < AMOUNT_OF_MEMORY; i++){
             memory[i] = 0;
@@ -104,6 +112,13 @@ public class CPU {
         for (int i = HEX_START_ADDRESS; i < HEX_END_ADDRESS; i++){
             memory[i] = fontSet[i];
         }
+    }
+
+
+    public void setClock(float clock){
+        clockSpeed = clock;
+        stepsBeforeRefresh = Math.round(clockSpeed/60);
+        nanoPeriodCPU = 1000000000/clockSpeed;
     }
 
 
@@ -533,7 +548,7 @@ public class CPU {
 
         // Stop current emulation (if emulating), reset CPU, and reset Graphics
         running = false;
-        initializeCPU();
+        initMemory();
         gPanel.clearScreen();
 
         try{
@@ -602,15 +617,12 @@ public class CPU {
 
 
     public void incrementClockSpeed(){
-        float newClock = chip8.clockSpeed + 10;
-        System.out.println(newClock);
-        chip8.setClock(newClock);
+        clockSpeed += 25;
     } 
 
 
     public void decrementClockSpeed(){
-        float newClock = chip8.clockSpeed - 10;
-        chip8.setClock(newClock);
+        clockSpeed -= 25;
     }
 
 
@@ -620,8 +632,9 @@ public class CPU {
 
 
     public void resumeRunning(){
-        running = true;
-        if (romLoaded){
+        if ((romLoaded) && !(running)){
+            System.out.println("start main loop ++++++++++++++++++++");
+            running = true;
             chip8.mainLoop();
         }
     }
@@ -629,7 +642,7 @@ public class CPU {
 
     public void reset(){
         gPanel.clearScreen();
-        initializeCPU();
+        initMemory();
     }
 
 }

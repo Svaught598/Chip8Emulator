@@ -106,26 +106,23 @@ public class StatusPanel extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e){
         if (e.getActionCommand() == "Increment"){
             // increment CPU speed
-            System.out.println("increment");
+            cpu.incrementClockSpeed();
         }
         if (e.getActionCommand() == "Decrement"){
             // Decrement CPU speed
-            System.out.println("decrement");
+            cpu.decrementClockSpeed();
         }
         if (e.getActionCommand() == "Pause"){
             // Pause emulator
             cpu.stopRunning();
-            System.out.println("pause");
         }
         if (e.getActionCommand() == "Resume"){
             // Resume Emulation
-            //cpu.resumeRunning();
-            System.out.println("resume");
+            cpu.resumeRunning();
         }
         if (e.getActionCommand() == "Reset"){
             // Reset Emulation
-            //cpu.reset();
-            System.out.println("reset");
+            cpu.reset();
         }
     }
 }

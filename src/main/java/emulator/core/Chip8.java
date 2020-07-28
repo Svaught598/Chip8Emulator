@@ -37,11 +37,12 @@ public class Chip8{
     MemoryPanel mPanel;
     StatusPanel sPanel;
     InstructionPanel iPanel;
+    SwingWorker mainThread;
 
-    // Clock speed & steps before timer countdown
-    public float clockSpeed;
-    public int stepsBeforeRefresh;
-    public float nanoPeriodCPU;       // nanoseconds per instruction
+    // // Clock speed & steps before timer countdown
+    // public float clockSpeed;
+    // public int stepsBeforeRefresh;
+    // public float nanoPeriodCPU;       // nanoseconds per instruction
 
  
     public Chip8(){
@@ -54,20 +55,20 @@ public class Chip8{
     }
 
 
-    public void setClock(float clock){
-        System.out.println("Setting new clock speed");
-        clockSpeed = clock;
-        stepsBeforeRefresh = Math.round(clockSpeed/60);
-        nanoPeriodCPU = 1000000000/clockSpeed;
-    }
+    // public void setClock(float clock){
+    //     System.out.println("Setting new clock speed");
+    //     clockSpeed = clock;
+    //     stepsBeforeRefresh = Math.round(clockSpeed/60);
+    //     nanoPeriodCPU = 1000000000/clockSpeed;
+    // }
 
 
     public void initChip8(){
         //instantiate objects for emulation
         cpu = new CPU();
 
-        //set clock up
-        setClock(500);
+        // //set clock up
+        // setClock(500);
 
         // Swing components need to be invoked later to be in the
         // event dispatching thread (otherwise, the CPU emulation cycle
@@ -158,7 +159,8 @@ public class Chip8{
 
     public void mainLoop(){
 
-        SwingWorker swingWorker = new SwingWorker(){
+        mainThread = new SwingWorker(){
+
             @Override
             protected String doInBackground() throws Exception{
 
@@ -167,31 +169,36 @@ public class Chip8{
                 long finalTime;
                 long timeElapsed;
                 int steps = 0;
+                long loopPeriod;
+                int numberOfSteps;
 
                 while (cpu.running){
+
+                    loopPeriod = getNewLoopPeriod();
+                    numberOfSteps = getNewNumberOfSteps();
 
                     // begin CPU cycles when rom is Loaded
                     if (cpu.romLoaded == true){
                         initialTime = System.nanoTime();
                         cpu.step();
-                        iPanel.updateInstruction(cpu);
 
                         // Do these actions 60 times a second, 
                         // stepsBeforeRefresh is calculated from ratio of 
                         // CPU clock speed and 60 Hz (ratio of 'cycles')
-                        if (steps % stepsBeforeRefresh == 0){
+                        if (steps % numberOfSteps == 0){
                             steps = 0;
                             cpu.decrementDelayTimer();
                             cpu.decrementSoundTimer();
 
                             // update panels!
                             mPanel.updateMemory(cpu);
+                            iPanel.updateInstruction(cpu);
                         }
 
                         // Wait until enough time has passed to begin next cycle
                         finalTime = System.nanoTime();
                         timeElapsed = finalTime - initialTime;
-                        while ((nanoPeriodCPU - timeElapsed) > 0){
+                        while ((loopPeriod - timeElapsed) > 0){
                             timeElapsed = System.nanoTime() - initialTime;
                             //System.out.println(timeElapsed);
                             try{
@@ -204,8 +211,21 @@ public class Chip8{
                 }
                 return "";
             }
+        
+
+            protected long getNewLoopPeriod(){
+                float clockSpeed = getChip8().cpu.clockSpeed;
+                return (long) (1000000000/clockSpeed);
+            }
+
+
+            protected int getNewNumberOfSteps(){
+                float clockSpeed = getChip8().cpu.clockSpeed;
+                return Math.round(clockSpeed/60);
+            }
         };
-        swingWorker.execute();
+
+        mainThread.execute();
     }
 
 

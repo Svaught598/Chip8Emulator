@@ -25,7 +25,7 @@ public class CPUTest {
     public void testOpcode_0x1NNN(){
         // load opcode 0x14AB into memory and emulate a cycle
         short[] instructions = {0x14, 0xAB};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.step();
 
@@ -46,7 +46,7 @@ public class CPUTest {
     public void testOpcode_0x2NNN(){
         // load opcode 0x24AB into memory and emulate a cycle
         short[] instructions = {0x24, 0xAB};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.step();
 
@@ -73,7 +73,7 @@ public class CPUTest {
         // Increment by 2 case
         // load opcode 0x32AB into memory, emulate a cycle, and test
         short[] instructions = {0x32, 0xAB};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[2] = 0x28;
         cpu.step();
@@ -81,7 +81,7 @@ public class CPUTest {
 
         //Increment by 4 case
         // load opcode 032AB into memory, emulate a cycle, and test
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[2] = 0xAB;
         cpu.step();
@@ -101,7 +101,7 @@ public class CPUTest {
         // Increment by 2 case
         // load opcode 0x42AB into memory, emulate a cycle, and test
         short[] instructions = {0x42, 0xAB};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[2] = 0xAB;
         cpu.step();
@@ -109,7 +109,7 @@ public class CPUTest {
 
         //Increment by 4 case
         // load opcode 042AB into memory, emulate a cycle, and test
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[2] = 0x28;
         cpu.step();
@@ -129,7 +129,7 @@ public class CPUTest {
         // Increment by 2 case
         // load the opcode 0x51F0 into memory, emulate a cycle, and test
         short[] instructions = {0x51, 0xF0};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0x1] = 51; cpu.V[0xF] = 123;
         cpu.step();
@@ -137,7 +137,7 @@ public class CPUTest {
 
         // Increment by 4 case
         // load the opcode 0x51F0 into memory, emulate a cycle, and test
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0x1] = 51; cpu.V[0xF] = 51;
         cpu.step();
@@ -156,7 +156,7 @@ public class CPUTest {
     public void testOpcode_0x6XNN(){
         //load the opcode 0x63AB into memory, emulate a cycle, and test
         short[] instructions = {0x63, 0xAB};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0x3] = 12;
         cpu.step();
@@ -182,14 +182,14 @@ public class CPUTest {
     public void testOpcode_0x7XNN(){
         // opcode 72AB, test for addition under 256
         short[] instructions = {0x72, 0xAB};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0x2] = 15;
         cpu.step();
         assertTrue(cpu.V[0x2] == (15 + 0xAB));
 
         // test for addition over 256 & program counter & carry flag
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0x2] = 0xFF;
         cpu.step();
@@ -210,7 +210,7 @@ public class CPUTest {
     public void testOpcode_08XY0(){
         // Opcode 8AB0, test for v[y] = v[x] and pc +=2
         short[] instructions = {0x8A, 0xB0};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 42;
         cpu.V[0xB] = 82;
@@ -232,7 +232,7 @@ public class CPUTest {
     public void testOpcode_08XY1(){
         // Opcode 0x8AB1, test bitwise or, and pc +=2
         short[] instructions = {0x8A, 0xB1};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0b10000000;
         cpu.V[0xB] = 0b00000001;
@@ -254,7 +254,7 @@ public class CPUTest {
     public void testOpcode_0x8XY2(){
         //opcode 0x8AB2, test bitwise and, and pc += 2
         short[] instructions = {0x8A, 0xB2};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0b00000001;
         cpu.V[0xB] = 0b10000000;
@@ -276,7 +276,7 @@ public class CPUTest {
     public void testOpcode_0x8XY3(){
         //opcode 0x8AB3, test bitwise xor, and pc += 2
         short[] instructions = {0x8A, 0xB3};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0b11111000;
         cpu.V[0xB] = 0b00011111;
@@ -300,7 +300,7 @@ public class CPUTest {
     public void testOpcode_0x8XY4(){
         //opcode 0x8AB4, carry occurs
         short[] instructions = {0x8A, 0xB4};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0xFF;
         cpu.V[0xB] = 0x0F;
@@ -311,7 +311,7 @@ public class CPUTest {
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
 
         //same opcode, carry does not occur
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0x0F;
         cpu.V[0xB] = 0x01;
@@ -336,7 +336,7 @@ public class CPUTest {
     public void testOpcode_0x8XY5(){
         //opcode 0x8AB5, borrow occurs
         short[] instructions = {0x8A, 0xB5};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0x0F;
         cpu.V[0xB] = 0xFF;
@@ -347,7 +347,7 @@ public class CPUTest {
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
 
         //same opcode, borrow does not occur
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0xFF;
         cpu.V[0xB] = 0x0F;
@@ -373,7 +373,7 @@ public class CPUTest {
 
         // //opcode 0x8AB6, LSB is 0
         // short[] instructions = {0x8A, 0xB6};
-        // cpu.initializeCPU();
+        // cpu.initMemory();
         // cpu.loadInstructions(instructions);
         // cpu.V[0xB] = 0b10000100;
         // cpu.step();
@@ -383,7 +383,7 @@ public class CPUTest {
         // assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
 
         // //same opcode, LSB is 1
-        // cpu.initializeCPU();
+        // cpu.initMemory();
         // cpu.loadInstructions(instructions);
         // cpu.V[0xB] = 0b10001011;
         // cpu.step();
@@ -407,7 +407,7 @@ public class CPUTest {
     public void testOpcode_08XY7(){
         //opcode 0x8AB7, borrow occurs
         short[] instructions = {0x8A, 0xB7};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0xFF;
         cpu.V[0xB] = 0x0F;
@@ -418,7 +418,7 @@ public class CPUTest {
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
 
         //same opcode, borrow does not occur
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0x0F;
         cpu.V[0xB] = 0xFF;
@@ -444,7 +444,7 @@ public class CPUTest {
 
         // //opcode 0x8ABE, MSB is 0
         // short[] instructions = {0x8A, 0xBE};
-        // cpu.initializeCPU();
+        // cpu.initMemory();
         // cpu.loadInstructions(instructions);
         // cpu.V[0xB] = 0b01110011;
         // cpu.step();
@@ -454,7 +454,7 @@ public class CPUTest {
         // assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
 
         // // same opcode, MSB is 1
-        // cpu.initializeCPU();
+        // cpu.initMemory();
         // cpu.loadInstructions(instructions);
         // cpu.V[0xB] = 0b10000000;
         // cpu.step();
@@ -476,7 +476,7 @@ public class CPUTest {
     public void testOpcode_0x9XY0(){
         //opcode 9AB0, increment by 2
         short[] instructions = {0x9A, 0xB0};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0xFB;
         cpu.V[0xB] = 0xFB;
@@ -484,7 +484,7 @@ public class CPUTest {
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
 
         //same opcode, increment by 4
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0xFF;
         cpu.V[0xB] = 0xAB;
@@ -504,7 +504,7 @@ public class CPUTest {
     public void testOpcode_0xANNN(){
         //opcode 0xA4BC
         short[] instructions = {0xA4, 0xBC};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.step();
         assertTrue(cpu.I == 0x4BC);
@@ -522,7 +522,7 @@ public class CPUTest {
     public void testOpcode_0xBNNN(){
         //opcode 0xB234, jump within memory
         short[] instructions = {0xB2, 0x34};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0] = 0xFF;
         cpu.step();
@@ -531,7 +531,7 @@ public class CPUTest {
         //opcode 0xBFFF, jump out of memory, should stay at current memory address
         instructions[0] = 0xBF;
         instructions[1] = 0xFF;
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0] = 0xFF;
         cpu.step();
@@ -550,7 +550,7 @@ public class CPUTest {
     public void testOpcode_0xCXNN(){
         //opcode 0xCA55, check for less than NN, and pc += 2
         short[] instructions = {0xCA, 0x55};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.step();
         assertTrue(cpu.V[0xA] <= 0x55);
@@ -569,7 +569,7 @@ public class CPUTest {
     public void testOpcode_0xFX07(){
         //opcode 0xFA07, test delayTimer to register and pc += 2
         short[] instructions = {0xFA, 0x07};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.delayTimer = 200;
         cpu.step();
@@ -589,7 +589,7 @@ public class CPUTest {
     public void testOpcode_0xFX15(){
         //opcode 0xFA15, test register to delayTimer and pc += 2
         short[] instructions = {0xFA, 0x15};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 200;
         cpu.step();
@@ -609,7 +609,7 @@ public class CPUTest {
     public void testOpcode_0xFX18(){
         //opcode 0xFA18, test register to soundTimer and pc += 2
         short[] instructions = {0xFA, 0x18};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 200;
         cpu.step();
@@ -629,7 +629,7 @@ public class CPUTest {
     public void testOpcode_0xFX1E(){
         //opcode 0xFA1E, test register to I, and pc += 2
         short[] instructions = {0xFA, 0x1E};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 200;
         cpu.step();
@@ -649,7 +649,7 @@ public class CPUTest {
     public void testOpcode_0xFX29(){
         //opcode 0xFA29, test I = correct address
         short[] instructions = {0xFA, 0x29};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 5;
         cpu.step();
@@ -657,7 +657,7 @@ public class CPUTest {
         assertTrue(cpu.programCounter == cpu.PROGRAM_START_ADDRESS + 2);
 
         //same opcode, make sure we only get 4 bits
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.V[0xA] = 0xF5;
         cpu.step();
@@ -679,7 +679,7 @@ public class CPUTest {
     public void testOpcode_0xFX33(){
         //opcode 0xFA33
         short[] instructions = {0xFA, 0x33};
-        cpu.initializeCPU();
+        cpu.initMemory();
         cpu.loadInstructions(instructions);
         cpu.I = 1000;
         cpu.V[0xA] = 123;
@@ -702,7 +702,7 @@ public class CPUTest {
     public void testOpcode_0xFX55(){
         // //opcode 0xF355, test memory is set correcctly, and I is set correctly, pc += 2
         // short[] instructions = {0xF3, 0x55};
-        // cpu.initializeCPU();
+        // cpu.initMemory();
         // cpu.loadInstructions(instructions);
         // cpu.I = 600;
         // cpu.V[0] = 0x0A; 
@@ -731,7 +731,7 @@ public class CPUTest {
     public void testOpcode_0xFX65(){
         // //opcode 0xF365, test memory is set correcctly, and I is set correctly, pc += 2
         // short[] instructions = {0xF3, 0x65};
-        // cpu.initializeCPU();
+        // cpu.initMemory();
         // cpu.loadInstructions(instructions);
         // cpu.I = 600;
         // cpu.memory[cpu.I+0] = 0x0A; 
