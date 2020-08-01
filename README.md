@@ -30,11 +30,28 @@ Since most of the application is GUI, unit tests have only been written for the 
 
 # Installation
 
-Coming soon!
+#### Prequisites
+
+Make sure that JDK 8, JRE 8, and Maven are installed:
+
+`sudo apt install openjdk-8-jdk openjdk-8-jre maven`
+
+#### Compiling and Running
+
+then clone the directory and cd into the root of it
+
+`git clone https://github.com/Svaught598/Chip8Emulator Chip8`
+`cd ./Chip8`
+
+Compile the code with Maven and use java to run it:
+
+`mvn clean package`
+`java -cp ./target/Chip8Emulator-1.0.jar emulator.Main`
+
 
 # Contributing
 
-Coming soon!
+Install as above, mess with the code, and submit a pull request!
 
 # License
 
