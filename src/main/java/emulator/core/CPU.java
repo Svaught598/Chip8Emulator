@@ -633,7 +633,6 @@ public class CPU {
 
     public void resumeRunning(){
         if ((romLoaded) && !(running)){
-            System.out.println("start main loop ++++++++++++++++++++");
             running = true;
             chip8.mainLoop();
         }

@@ -58,7 +58,7 @@ public class MemoryPanel extends JPanel{
     public MemoryPanel(LayoutManager layout){
         super(layout);
         setLayout(new GridLayout(0, 3));
-        setBackground(Color.decode("#E4D8B4"));
+        setBackground(Color.decode("#11151c"));
         initializeLabels();
         createRegisterPanel();
         createStackPanel();
@@ -75,12 +75,19 @@ public class MemoryPanel extends JPanel{
         for (int i=0; i<0x10; i++){
             registerLabels[i] = new MLabel(String.format("V%X: N/A", i));
             stackLabels[i] = new MLabel(String.format("S%X: N/A", i));
+            registerLabels[i].setForeground(Color.decode("#7d4e57"));
+            stackLabels[i].setForeground(Color.decode("#7d4e57"));
         }
         soundTimer.setText("Sound: N/A");
         delayTimer.setText("Delay: N/A");
         programCounter.setText("PC: N/A");
         stackPointer.setText("SP: N/A");
         valueI.setText("I: N/A");
+        soundTimer.setForeground(Color.decode("#7d4e57"));
+        delayTimer.setForeground(Color.decode("#7d4e57"));
+        programCounter.setForeground(Color.decode("#7d4e57"));
+        stackPointer.setForeground(Color.decode("#7d4e57"));
+        valueI.setForeground(Color.decode("#7d4e57"));
 
         // Aligning the labels in the center of column
         for (int i=0; i<0x10; i++){
@@ -99,7 +106,7 @@ public class MemoryPanel extends JPanel{
     protected void createRegisterPanel(){
         // Initialize new panel
         registerPanel = new JPanel();
-        registerPanel.setBackground(Color.decode("#E4D8B4"));
+        registerPanel.setBackground(Color.decode("#11151c"));
         BoxLayout box = new BoxLayout(registerPanel, BoxLayout.Y_AXIS);
         registerPanel.setLayout(box);
         registerPanel.setPreferredSize(subPanelDims);
@@ -116,7 +123,7 @@ public class MemoryPanel extends JPanel{
     protected void createStackPanel(){
         // Initialize new panel
         stackPanel = new JPanel();
-        stackPanel.setBackground(Color.decode("#E4D8B4"));
+        stackPanel.setBackground(Color.decode("#11151c"));
         BoxLayout box = new BoxLayout(stackPanel, BoxLayout.Y_AXIS);
         stackPanel.setLayout(box);
         stackPanel.setPreferredSize(subPanelDims);
@@ -133,7 +140,7 @@ public class MemoryPanel extends JPanel{
     protected void createOtherPanel(){
         // Initialize new panel
         otherPanel = new JPanel();
-        otherPanel.setBackground(Color.decode("#E4D8B4"));
+        otherPanel.setBackground(Color.decode("#11151c"));
         BoxLayout box = new BoxLayout(otherPanel, BoxLayout.Y_AXIS);
         otherPanel.setLayout(box);
         otherPanel.setPreferredSize(subPanelDims);

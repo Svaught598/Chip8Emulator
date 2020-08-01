@@ -20,7 +20,7 @@ public class InstructionPanel extends JPanel{
 
     public InstructionPanel(LayoutManager layout){
         super(layout);
-        setBackground(Color.decode("#E4D8B4"));
+        setBackground(Color.decode("#11151c"));
         initializePanel();
     }
 
@@ -29,7 +29,7 @@ public class InstructionPanel extends JPanel{
         // set font, color, & border
         instruction = new JLabel("0x0000");
         instruction.setFont(new Font("Bauhaus 93", Font.BOLD, 26));
-        instruction.setForeground(Color.decode("#83B799"));
+        instruction.setForeground(Color.decode("#7d4e57"));
         instruction.setMaximumSize(instruction.getMinimumSize());
         instruction.setHorizontalAlignment(SwingConstants.CENTER);
         add(instruction, SwingConstants.CENTER);

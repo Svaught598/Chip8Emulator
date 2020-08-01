@@ -2,13 +2,12 @@
 
 Just a CHIP-8 Emulator! Built with Java & Swing, project undertaken to learn about system emulation.
 
+
+![Screenshot of Emulator](media/CHIP8Emulator.png)
+
 # Motivation
 
 Since I found out about system emulation, I have been super fascinated with it. I'm building this CHIP-8 emulator (interpreter...?) to get started since the EmuDev community tends to suggest it for first-timers. I don't have a ton of programming experience, and never used Java before, so I thought it would be a good idea to learn that as well! I Plan on compiling useful tips for CHIP-8 Emulation soon.
-
-# Screenshots
-
-Coming soon!
 
 # Technology Used
 

@@ -28,7 +28,7 @@ public class GraphicsPanel extends JPanel{
 
     public GraphicsPanel(LayoutManager layout){
         super(layout);
-        setBackground(Color.decode("#272324"));
+        setBackground(Color.decode("#212d40"));
     }
 
     
@@ -45,10 +45,10 @@ public class GraphicsPanel extends JPanel{
             int posY = (int) Math.floor(i/DISPLAY_WIDTH);
 
             if (pixelArray[i] != 1) {
-                g.setColor(Color.decode("#272324"));
+                g.setColor(Color.decode("#212d40"));
             }
             else {
-                g.setColor(Color.decode("#E2CD6D"));
+                g.setColor(Color.decode("#d66853"));
             }
             g.fillRect(posX*PIXEL_WIDTH, posY*PIXEL_HEIGHT, PIXEL_WIDTH, PIXEL_HEIGHT);
         }

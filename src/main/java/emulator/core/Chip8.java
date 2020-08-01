@@ -17,6 +17,9 @@ import java.awt.Insets;
 import java.awt.Dimension;
 
 import java.io.File;
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import emulator.view.GraphicsPanel;
 import emulator.view.MemoryPanel;
@@ -77,19 +80,19 @@ public class Chip8{
                 window.getContentPane().add(
                     gPanel, new GridBagConstraints(
                         0, 0, 1, 1, 0.75, 0.7, GridBagConstraints.WEST, 
-                        GridBagConstraints.BOTH, new Insets(6, 6, 6, 6), 0, 0)
+                        GridBagConstraints.BOTH, new Insets(16, 16, 16, 16), 0, 0)
                 );
 
                 // adding Memory Panel to GUI
                 mPanel.setBorder(
                     BorderFactory.createTitledBorder(
                         BorderFactory.createCompoundBorder(
-                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#d66853"))), 
                         "CPU Registers", 
                         SwingConstants.CENTER, 
                         SwingConstants.CENTER, 
                         new Font("Bauhaus 93", Font.BOLD, 16), 
-                        Color.decode("#E86F68")));
+                        Color.decode("#d66853")));
                 window.getContentPane().add(
                     mPanel, new GridBagConstraints(
                         1, 0, 1, 1, 0.25, 0.7, GridBagConstraints.WEST, 
@@ -100,12 +103,12 @@ public class Chip8{
                 sPanel.setBorder(
                     BorderFactory.createTitledBorder(
                         BorderFactory.createCompoundBorder(
-                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#d66853"))), 
                         "Emulator Status", 
                         SwingConstants.CENTER, 
                         SwingConstants.CENTER, 
                         new Font("Bauhaus 93", Font.BOLD, 16), 
-                        Color.decode("#E86F68")));
+                        Color.decode("#d66853")));
                 window.getContentPane().add(
                     sPanel, new GridBagConstraints(
                         0, 1, 1, 1, 0.75, 0.3, GridBagConstraints.WEST, 
@@ -116,12 +119,12 @@ public class Chip8{
                 iPanel.setBorder(
                     BorderFactory.createTitledBorder(
                         BorderFactory.createCompoundBorder(
-                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#E86F68"))), 
+                            new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.decode("#d66853"))), 
                         "Last Instruction", 
                         SwingConstants.CENTER, 
                         SwingConstants.CENTER, 
                         new Font("Bauhaus 93", Font.BOLD, 16), 
-                        Color.decode("#E86F68")));
+                        Color.decode("#d66853")));
                 window.getContentPane().add(
                     iPanel, new GridBagConstraints(
                         1, 1, 1, 1, 0.25, 0.3, GridBagConstraints.WEST, 
@@ -228,6 +231,22 @@ public class Chip8{
             sPanel.updateRomLoaded(rom.getName());
             mainLoop();
         }
+    }
+
+
+    public void saveState(int state){
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+            mapper.writeValue(
+                new File(String.format("state_%d", state)),
+                cpu
+            );
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void loadState(int state){
 
     }
 }

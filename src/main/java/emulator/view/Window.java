@@ -47,7 +47,7 @@ public class Window extends JFrame implements ActionListener{
     public void initWindow(){
         prepareMenu();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(Color.decode("#C2B28F"));
+        getContentPane().setBackground(Color.decode("#11151c"));
         setVisible(true);
     }
 
@@ -137,36 +137,36 @@ public class Window extends JFrame implements ActionListener{
 
         // Save States
         else if (e.getActionCommand() == SAVE_STATE_1){
-
+            chip8.saveState(1);
         }
         else if (e.getActionCommand() == SAVE_STATE_2){
-
+            chip8.saveState(2);
         }
         else if (e.getActionCommand() == SAVE_STATE_3){
-
+            chip8.saveState(3);
         }
         else if (e.getActionCommand() == SAVE_STATE_4){
-
+            chip8.saveState(4);
         }
         else if (e.getActionCommand() == SAVE_STATE_5){
-
+            chip8.saveState(5);
         }
 
         // Load States
         else if (e.getActionCommand() == LOAD_STATE_1){
-
+            chip8.loadState(1);
         }
         else if (e.getActionCommand() == LOAD_STATE_2){
-
+            chip8.loadState(2);
         }
         else if (e.getActionCommand() == LOAD_STATE_3){
-
+            chip8.loadState(3);
         }
         else if (e.getActionCommand() == LOAD_STATE_4){
-
+            chip8.loadState(4);
         }
         else if (e.getActionCommand() == LOAD_STATE_5){
-
+            chip8.loadState(5);
         }
     }
 }
