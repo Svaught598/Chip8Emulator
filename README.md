@@ -17,12 +17,14 @@ Since I found out about system emulation, I have been super fascinated with it. 
 
 # Features
 
-The goal is to be fully compatible with all known implementations of CHIP-8 instructions (using a menu with different "Modes"). Right now, the emulator is incomplete, but the current feature list is:
-
 - Debug UI (to monitor registers, stack, timers, counters, etc...)
 - Variable CPU clock speed
 - Pause/Resume/Reset Emulation
 - Load Roms from File
+
+# Compatible Roms
+
+All roms in the roms folder are fully compatible with this emulator. I didn't implement any CHIP-48 opcodes, so roms from popular archives like [this one](https://github.com/JohnEarnest/chip8Archive) are incompatible. It should be noted that this project is NOT an implementation of the CHIP-48, so this incompatibility is not indicative of partial completion.
 
 # Testing
 
