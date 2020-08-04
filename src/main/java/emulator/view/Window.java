@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import emulator.core.Chip8;
 
@@ -35,6 +36,14 @@ public class Window extends JFrame implements ActionListener{
     String LOAD_STATE_4 = "load 4";
     String LOAD_STATE_5 = "load 5";
 
+    String FIFTEEN_PUZZLE = "./roms/15PUZZLE";
+    String BLINKY = "./roms/BLINKY";
+    String BRIX = "./roms/BRIX";
+    String INVADERS = "./roms/INVADERS";
+    String PONG = "./roms/PONG";
+    String PUZZLE = "./roms/PUZZLE";
+    String TETRIS = "./roms/TETRIS";
+
 
     public Chip8 chip8;
 
@@ -58,9 +67,48 @@ public class Window extends JFrame implements ActionListener{
         JMenu fileMenu = new JMenu("File");
 
         // Loading roms =+++++++++++++++++++++++++++++++++++++++++
-        JMenuItem loadRomItem = new JMenuItem("Load Rom");
+        JMenu loadMenu = new JMenu("Load ROM");
+
+        JMenuItem fifteenPuzzle = new JMenuItem("15PUZZLE");
+        fifteenPuzzle.addActionListener(this);
+        fifteenPuzzle.setActionCommand(FIFTEEN_PUZZLE);
+
+        JMenuItem blinky = new JMenuItem("BLINKY");
+        blinky.addActionListener(this);
+        blinky.setActionCommand(BLINKY);
+
+        JMenuItem brix = new JMenuItem("BRIX");
+        brix.addActionListener(this);
+        brix.setActionCommand(BRIX);
+
+        JMenuItem invaders = new JMenuItem("INVADERS");
+        invaders.addActionListener(this);
+        invaders.setActionCommand(INVADERS);
+
+        JMenuItem puzzle = new JMenuItem("PUZZLE");
+        puzzle.addActionListener(this);
+        puzzle.setActionCommand(PUZZLE);
+
+        JMenuItem pong = new JMenuItem("PONG");
+        pong.addActionListener(this);
+        pong.setActionCommand(PONG);
+
+        JMenuItem tetris = new JMenuItem("TETRIS");
+        tetris.addActionListener(this);
+        tetris.setActionCommand(TETRIS);
+
+        JMenuItem loadRomItem = new JMenuItem("Load from File");
         loadRomItem.addActionListener(this);
         loadRomItem.setActionCommand(LOAD_ROM);
+
+        loadMenu.add(loadRomItem);
+        loadMenu.add(fifteenPuzzle);
+        loadMenu.add(blinky);
+        loadMenu.add(brix);
+        loadMenu.add(invaders);
+        loadMenu.add(puzzle);
+        loadMenu.add(pong);
+        loadMenu.add(tetris);
 
         // loading states ++++++++++++++++++++++++++++++++++++++++
         JMenu loadState = new JMenu("Load State");
@@ -121,7 +169,7 @@ public class Window extends JFrame implements ActionListener{
         saveState.add(save5);
 
         // Putting it all together +++++++++++++++++++++++++
-        fileMenu.add(loadRomItem);
+        fileMenu.add(loadMenu);
         fileMenu.add(saveState);
         fileMenu.add(loadState);
         menuBar.add(fileMenu);
@@ -133,6 +181,29 @@ public class Window extends JFrame implements ActionListener{
         // Load Rom From File
         if (e.getActionCommand() == LOAD_ROM){
             chip8.loadRom();
+        }
+
+        // or from roms folder
+        else if (e.getActionCommand() == FIFTEEN_PUZZLE){
+            chip8.loadRomByPath(FIFTEEN_PUZZLE);
+        }
+        else if (e.getActionCommand() == BLINKY){
+            chip8.loadRomByPath(BLINKY);
+        }
+        else if (e.getActionCommand() == BRIX){
+            chip8.loadRomByPath(BRIX);
+        }
+        else if (e.getActionCommand() == INVADERS){
+            chip8.loadRomByPath(INVADERS);
+        }
+        else if (e.getActionCommand() == PONG){
+            chip8.loadRomByPath(PONG);
+        }
+        else if (e.getActionCommand() == PUZZLE){
+            chip8.loadRomByPath(PUZZLE);
+        }
+        else if (e.getActionCommand() == TETRIS){
+            chip8.loadRomByPath(TETRIS);
         }
 
         // Save States
