@@ -17,9 +17,16 @@ import java.awt.Insets;
 import java.awt.Dimension;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.io.FileWriter;
+import java.io.FileReader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+//import org.json.simple.parser.ParseException;
 
 import emulator.view.GraphicsPanel;
 import emulator.view.MemoryPanel;
@@ -235,18 +242,199 @@ public class Chip8{
 
 
     public void saveState(int state){
-        ObjectMapper mapper = new ObjectMapper();
-        try{
-            mapper.writeValue(
-                new File(String.format("state_%d", state)),
-                cpu
+        // save memory as a object
+        JSONObject memory = new JSONObject();
+        for (int i = 0; i < cpu.AMOUNT_OF_MEMORY; i++){
+            memory.put(
+                String.format("memory%d", i), 
+                String.format("%d", cpu.memory[i]));
+        }
+
+        // Saving register values
+        JSONObject register = new JSONObject();
+        for (int i = 0; i < 0x10; i++){
+            register.put(
+                String.format("register%d", i),
+                String.format("%d", cpu.V[i])
             );
+        }
+
+        // saving stack values
+        JSONObject stack = new JSONObject();
+        for (int i = 0; i < 0x10; i++){
+            stack.put(
+                String.format("stack%d", i),
+                String.format("%d", cpu.stack[i])
+            );
+        }
+
+        // saving gPanel pixelarray
+        JSONObject pixelArray = new JSONObject();
+        for (int i = 0; i < gPanel.NUMBER_OF_PIXELS; i++){
+            pixelArray.put(
+                String.format("pixel%d", i),
+                String.format("%d", gPanel.pixelArray[i])
+            );
+        }
+
+        // saving other values
+        JSONObject index = new JSONObject();
+        index.put("I", cpu.I);
+
+        JSONObject delayTimer = new JSONObject();
+        delayTimer.put("delayTimer", cpu.delayTimer);
+
+        JSONObject soundTimer = new JSONObject();
+        soundTimer.put("soundTimer", cpu.soundTimer);
+
+        JSONObject programCounter = new JSONObject();
+        programCounter.put("programCounter", cpu.programCounter);
+
+        JSONObject stackPointer = new JSONObject();
+        stackPointer.put("stackPointer", cpu.stackPointer);
+
+        JSONObject opcode = new JSONObject();
+        opcode.put("opcode", cpu.opcode);
+
+        // parent array for allobjects to go in
+        JSONArray cpuState = new JSONArray();
+
+        // Add the objects to the state array
+        cpuState.add(memory);
+        cpuState.add(register);
+        cpuState.add(stack);
+        cpuState.add(pixelArray);
+        cpuState.add(index);
+        cpuState.add(delayTimer);
+        cpuState.add(soundTimer);
+        cpuState.add(programCounter);
+        cpuState.add(stackPointer);
+        cpuState.add(opcode);
+
+        // Writing file to JSON file
+        try (FileWriter file = new FileWriter(String.format("./saves/state_%d.json", state))){
+            file.write(cpuState.toJSONString());
+            file.flush();
         } catch (IOException e){
             e.printStackTrace();
         }
+
     }
 
-    public void loadState(int state){
 
+    public void loadState(int state){
+        
+        // reset cpu state and create parser for state data
+        cpu.reset();
+        JSONParser parser = new JSONParser();
+
+        // read the cpu state file in question, parse each field
+        try (FileReader file = new FileReader(String.format("./saves/state_%d.json", state))){
+            Object obj = parser.parse(file);
+            JSONArray cpuState = (JSONArray) obj;
+            for (Object field : cpuState){
+                parseField((JSONObject) field);
+            }
+
+        // catch some exceptions
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (org.json.simple.parser.ParseException e){
+            e.printStackTrace();
+        }
+
+        // Start loop
+        cpu.romLoaded = true;
+        cpu.resumeRunning();
+        System.out.println(cpu.running);
+    }
+
+
+    public void parseField(JSONObject field){
+        // load memory values
+        if (field.containsKey("memory1")){
+            for (int i = 0; i < cpu.AMOUNT_OF_MEMORY; i++){
+                cpu.memory[i] = Short.valueOf(
+                    String.valueOf(
+                        field.get(
+                            String.format("memory%d", i)
+                        )
+                    )
+                );
+            }
+        }
+
+        // loading register values
+        else if (field.containsKey("register1")){
+            for (int i = 0; i < 0x10; i++){
+                cpu.V[i] = Short.valueOf(
+                    String.valueOf(
+                        field.get(
+                            String.format("register%d", i)
+                        )
+                    )
+                );
+            }
+        }
+
+        // loading stack values
+        else if (field.containsKey("stack1")){
+            for (int i = 0; i < 0x10; i++){
+                cpu.stack[i] = Short.valueOf(
+                    String.valueOf(
+                        field.get(
+                            String.format("stack%d", i)
+                        )
+                    )
+                );
+            }
+        }
+
+        // loading pixelarray
+        else if (field.containsKey("pixel1")){
+            for (int i = 0; i < gPanel.NUMBER_OF_PIXELS; i++){
+                gPanel.pixelArray[i] = Byte.valueOf(
+                    String.valueOf(
+                        field.get(
+                            String.format("pixel%d", i)
+                        )
+                    )
+                );
+            }
+        }
+
+        // loading the reset of the values
+        else if (field.containsKey("I")){
+            cpu.I = Short.valueOf(
+                String.valueOf(field.get("I"))
+            );
+        }
+        else if (field.containsKey("delayTimer")){
+            cpu.delayTimer = Short.valueOf(
+                String.valueOf(field.get("delayTimer"))
+            );
+        }
+        else if (field.containsKey("soundTimer")){
+            cpu.soundTimer = Short.valueOf(
+                String.valueOf(field.get("soundTimer"))
+            );
+        }
+        else if (field.containsKey("stackPointer")){
+            cpu.stackPointer = Short.valueOf(
+                String.valueOf(field.get("stackPointer"))
+            );
+        }
+        else if (field.containsKey("programCounter")){
+            cpu.programCounter = Short.valueOf(
+                String.valueOf(field.get("programCounter"))
+            );
+        }
+        else if (field.containsKey("opcode")){
+            cpu.opcode =  Integer.valueOf(
+                String.valueOf(field.get("opcode"))
+            ); 
+        }
     }
 }

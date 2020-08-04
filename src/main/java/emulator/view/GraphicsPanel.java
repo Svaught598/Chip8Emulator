@@ -23,7 +23,7 @@ public class GraphicsPanel extends JPanel{
 
     int test = 1;
     public boolean pixelFlipped = false;
-    byte pixelArray[] = new byte[2048];
+    public byte pixelArray[] = new byte[2048];
 
 
     public GraphicsPanel(LayoutManager layout){
