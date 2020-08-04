@@ -241,6 +241,14 @@ public class Chip8{
     }
 
 
+    public void loadRomByPath(String path){
+        File rom = new File(path);
+        cpu.loadRom(rom);
+        sPanel.updateRomLoaded(rom.getName());
+        mainLoop();
+    }
+
+
     public void saveState(int state){
         // save memory as a object
         JSONObject memory = new JSONObject();
