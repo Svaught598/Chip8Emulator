@@ -634,6 +634,7 @@ public class CPU {
     public void resumeRunning(){
         if ((romLoaded) && !(running)){
             running = true;
+            System.out.println("entered conditional if");
             chip8.mainLoop();
         }
     }
