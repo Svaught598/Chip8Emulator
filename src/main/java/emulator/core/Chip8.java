@@ -227,6 +227,7 @@ public class Chip8{
 
 
     public void loadRom(){
+        cpu.reset();
         //Creating FileChooser
         final JFileChooser fileChooser = new JFileChooser();
         int returnValue = fileChooser.showDialog(window, "Load Rom");
